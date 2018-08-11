@@ -177,7 +177,7 @@ function editionTag () {
 }
 
 function tagRegExp (tag) {
-    return new RegExp('\s?' + tag + '\s?');
+    return new RegExp('\s*' + tag + '\s*');
 }
 
 function addTagToAll () {
