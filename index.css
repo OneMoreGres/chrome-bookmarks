@@ -1,357 +1,114 @@
-
 .toolbar {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    transition: top 0.3s;
-    background-color: #e9e9e9;
-    border: 1px solid;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  transition: top 0.3s;
+  background-color: #e9e9e9;
+  border: 1px solid;
 }
 
 #search {
-    float: left;
-    padding: 6px;
-    border: none;
-    width: 30%;
+  float: left;
+  padding: 6px;
+  border: none;
+  width: 30%;
 }
 
 #tag-input {
-    float: left;
-    padding: 6px;
-    border: none;
+  float: left;
+  padding: 6px;
+  border: none;
 }
 
 .toolbar a {
-    float: left;
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 6px;
-    text-decoration: none;
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 6px;
+  text-decoration: none;
 }
 
 .toolbar a:hover {
-    background-color: #ddd;
-    color: black;
+  background-color: #ddd;
+  color: black;
 }
 
 #bookmarks {
-	margin-top: 20px;
-	width:100%;
-	border-top:1px solid #e5e5e5;
+  margin-top: 20px;
+  width: 100%;
+  border-top: 1px solid #e5e5e5;
 }
 
 #bookmarks ul {
-	list-style-type: none;
-    list-style-position: inside;
-    padding: 0px;
+  list-style-type: none;
+  list-style-position: inside;
+  padding: 0px;
 }
 
 #bookmarks li {
-	list-style-type: none;
-    list-style-position: inside;
-    padding: 0px;
-    background: #fffefa;
+  list-style-type: none;
+  list-style-position: inside;
+  padding: 0px;
+  background: #fffefa;
 }
 
 #bookmarks li:nth-child(odd) {
-    background: #f5f5f5;
+  background: #f5f5f5;
 }
 
 .bookmark .bookmark img {
-	padding: 4px;
+  padding: 4px;
 }
 
 .bookmark .title {
-	padding: 4px;
-	font-weight: bold;
+  padding: 4px;
+  font-weight: bold;
 }
 
 .bookmark .url {
-	overflow: hidden;
-	color:#74736d;
-    padding: 0px;
-    margin: 0;
+  overflow: hidden;
+  color: #74736d;
+  padding: 0px;
+  margin: 0;
 }
 
 .bookmark .hostname {
-    font-weight: bold;
+  font-weight: bold;
 }
 
-.bookmark .path, .bookmark .tag, .controls .edit {
-	padding: 2px;
-	background:#12aa63;
-    border-radius:2px;
-    margin: 0 2px 0 0;
-	color:#fff;
-    font-size: 10px;
-    cursor: default;
+.bookmark .path,
+.bookmark .tag,
+.controls .edit {
+  padding: 2px;
+  background: #12aa63;
+  border-radius: 2px;
+  margin: 0 2px 0 0;
+  color: #fff;
+  font-size: 10px;
+  cursor: default;
 }
 
 .bookmark .path {
-	background:#12aa63;
+  background: #12aa63;
 }
 
 .bookmark .tag {
-	background:#4185fa;
+  background: #4185fa;
 }
 
 .controls .edit {
-  background:#74736d;
+  background: #74736d;
 }
 
 .label {
-	float:left;
-	padding:4px;
-	color:#fff;
-	border-radius:4px;
-	margin:0 2px 2px 0;
-	font-weight:bold;
-	text-decoration:none;
-	background:#aeaeae;
+  float: left;
+  padding: 4px;
+  color: #fff;
+  border-radius: 4px;
+  margin: 0 2px 2px 0;
+  font-weight: bold;
+  text-decoration: none;
+  background: #aeaeae;
 }
-
-
-
-/* Style the "active" element to highlight the current page */
-/* .toolbar a.active {
-    background-color: #2196F3;
-    color: white;
-} */
-
-
-/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-/* @media screen and (max-width: 600px) {
-    .topnav a, .topnav input[type=text] {
-        float: none;
-        display: block;
-        text-align: left;
-        width: 100%;
-        margin: 0;
-        padding: 14px;
-    }
-    .topnav input[type=text] {
-        border: 1px solid #ccc;
-    }
-} */
-
-/* #controls { */
-	/* border-top:1px solid #e5e5e5; */
-	/* background:#f5f5f5; */
-/* } */
-/* #controls ul { */
-	/* height:20px; */
-	/* overflow: hidden; */
-/* } */
-/* #controls ul li {
-	float:left;
-	height:20px;
-	border-right: 1px solid #e5e5e5;
-} */
-/* #toolbar ul li a, #toolbar ul li a:hover {
-	display: block;
-	color:#000;
-	height:20px;
-	line-height:20px;
-	background-repeat: no-repeat;
-	background-position: 4px 4px;
-	padding:0 6px;
-	text-decoration:none;
-	opacity:0.5;
-}
-#toolbar ul li.close {
-	float:right;
-	border-left: 1px solid #e5e5e5;
-	border-right: 0;
-	font-weight:bold;
-} */
-
-/* #wrapper {
-	width:100%;
-	clear:both;
-	height:300px;
-}
-.clearfix {
-	display:block;
-	clear: both;
-	height:0.1em;
-	overflow: hidden;
-	margin:0;
-	padding:0;
-}
-#bookmarks {
-	margin:4px 0 0 0;
-	width:100%;
-	border-top:1px solid #e5e5e5;
-}
-#folders li, #tags li {
-	float:left;
-}
-.label {
-	float:left;
-	padding:4px;
-	color:#fff;
-	border-radius:4px;
-	margin:0 2px 2px 0;
-	font-weight:bold;
-	text-decoration:none;
-	background:#aeaeae;
-}
-.bookmark {
-	border-bottom:1px solid #e5e5e5;
-	padding:6px 0;
-	position:relative;
-	overflow:hidden;
-	background:#fff;
-} */
-/*.bookmark:hover {
-background: #fafafa;
-}*/
-/* .bookmark .title {
-	float:left;
-	display:block;
-	font-weight: bold;
-	font-size: 12px;
-	padding-bottom:4px;
-}
-.bookmark .url {
-	display: block;
-	clear:both;
-	overflow: hidden;
-	white-space: nowrap;
-	color:#9b9a7d;
-	padding-bottom:4px;
-}
-.bookmark .labels, .bookmark .url {
-	float:left;
-	margin-left:20px;
-	clear:both;
-}
-.bookmark .label {
-	font-size:9px;
-	font-weight: normal;
-	padding:1px 2px;
-	border-radius:2px;
-}
-.bookmark .edit {
-	position:absolute;
-	bottom:4px;
-	right:0;
-	text-decoration:none;
-	font-size:18px;
-	width:20px;
-	height:20px;
-	line-height:20px;
-	background:#f5aa45;
-	color:#fff;
-	border-radius: 4px;
-	opacity:0.6;
-	display:none;
-	text-align:center;
-}
-.bookmark .edit:hover {
-	opacity:1.0;
-}
-.bookmark:hover .edit {
-	display:block;
-}
-.bookmark .favicon {
-	float:left;
-	width:16px;
-	height:16px;
-	margin-right:4px;
-} */
-/* .bookmark .favicon img {
-	max-width:16px;
-	max-height:16px;
-	border:0;
-}
-a {
-	color:#333;
-}
-a:hover {
-	color:#000;
-}
-
-#search {
-	height:16px;
-	line-height:16px;
-	padding:0 6px;
-	margin:2px;
-	border:0;
-	width:80px;
-	background:#fff;
-	font-family: verdana;
-	font-size:10px;
-}
-#search:focus {outline:none;}
-#over {
-	position:absolute;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-	background: rgba(255,255,255,.8);
-	z-index:1000;
-}
-#editor {
-	position:absolute;
-	top:2%;
-	left:2%;
-	width:90%;
-	overflow: auto;
-	min-height:40%;
-	max-height:90%;
-	background:#f5f5f5;
-	z-index:1005;
-	-webkit-box-shadow: 0 0 5px 2px rgba(0,0,0,0.5);
-	box-shadow: 0 0 5px 2px rgba(0,0,0,0.3);
-}
-#editor .control {
-	clear: both;
-	padding:12px 6px 0 6px;
-}
-#editor .control label {
-	display:block;
-	color:#888;
-}
-#editor .control input, #editor .control textarea {
-	width:90%;
-	padding:4px;
-}
-#editor .control textarea {
-	min-height: 40px;
-}
-#editor input, #editor select, #editor select option, #editor button, #editor textarea {
-	font-family: verdana;
-	font-size:11px;
-}
-#editor #save {
-	font-weight:bold;
-}
-#editor #delete {
-	color:#c00;
-}
-#editor button {
-	cursor:pointer;
-	padding:4px 8px;
-}
-#delete {
-	float:right;
-}
-#addTag li {
-	float:left;
-	margin: 0 4px 4px 0;
-}
-#wrapper {
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-.bookmark {
-	padding-right:6px;
-}
-.bookmark .url {
-	max-width:90%;
-	overflow: hidden;
-} */
