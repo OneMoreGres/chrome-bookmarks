@@ -33,6 +33,11 @@ function showBookmark(parent, node, pathString) {
         path.innerHTML = text;
         path.className = 'path';
         paths.appendChild(path);
+
+        path.onclick = function () {
+        document.querySelector('#search').value += ' /' + text;
+        doSearch();
+      }
     });
     paths.className = 'paths';
 
@@ -53,6 +58,11 @@ function showBookmark(parent, node, pathString) {
         tag.innerHTML = text;
         tag.className = "tag";
         tags.appendChild(tag);
+
+      tag.onclick = function () {
+        document.querySelector('#search').value += ' ' + text;
+        doSearch();
+      }
     });
     tags.className = "tags";
 
