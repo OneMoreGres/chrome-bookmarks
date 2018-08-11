@@ -241,6 +241,34 @@ function removeTagFromAll() {
   doSearch();
 }
 
+function addFolderTags() {
+  var items = document.querySelectorAll('.bookmark');
+  for (var i = 0; i < items.length; ++i) {
+    var item = items[i];
+    var id = item.getAttribute('id');
+    var title = item.getAttribute('title');
+    if (!id || !title) continue;
+
+    var changed = false;
+    var paths = item.querySelectorAll('.path');
+    for (var ii = 0; ii < paths.length; ++ii) {
+      var path = paths[ii].innerHTML;
+      if (path.indexOf(' ') != -1) continue; // spaces are forbidden
+      var re = tagRegExp(path);
+      var index = title.search(re);
+      if (index != -1) continue;
+      title = title + ' #' + path;
+      changed = true;
+    }
+
+    if (changed && title.length > 0) {
+      chrome.bookmarks.update(id, { 'title': title });
+    }
+
+  };
+  doSearch();
+}
+
 function init() {
   document.querySelector('#search').oninput = function () {
     doSearch();
@@ -254,6 +282,7 @@ function init() {
   };
   document.querySelector('#add-tag').onclick = addTagToAll;
   document.querySelector('#remove-tag').onclick = removeTagFromAll;
+  document.querySelector('#add-folder-tags').onclick = addFolderTags;
 };
 
 init();
