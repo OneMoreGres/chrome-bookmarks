@@ -7,7 +7,7 @@ function cleanName(title) {
 }
 
 function getTags(title) {
-    var matches = title.toLowerCase().match(/#([\d\w]+)/g);
+    var matches = title.toLowerCase().match(/#([\d-\w]+)/g);
     var result = matches ? matches : [];
 	return result;
 }
@@ -177,7 +177,7 @@ function editionTag () {
 }
 
 function tagRegExp (tag) {
-    return new RegExp('\s*' + tag + '\s*');
+    return new RegExp('\s*' + tag + '(\s|$)');
 }
 
 function addTagToAll () {
