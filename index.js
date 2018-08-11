@@ -190,7 +190,7 @@ function addTagToAll () {
         var item = items[i];
         var id = item.getAttribute('id');
         var title = item.getAttribute('title');
-        if (!id || !title || title.search(re) != -1) return;
+        if (!id || !title || title.search(re) != -1) continue;
         chrome.bookmarks.update(id, { 'title': title + ' ' + tag });
     };
     doSearch();
@@ -206,11 +206,11 @@ function removeTagFromAll () {
         var item = items[i];
         var id = item.getAttribute('id');
         var title = item.getAttribute('title');
-        if (!id || !title) return;
+        if (!id || !title) continue;
 
         var index = title.search(re);
-        if (index == -1) return;
-        title = title.replace(re, '');
+        if (index == -1) continue;
+        title = title.replace(re, ' ');
         chrome.bookmarks.update(id, { 'title': title });
     };
     doSearch();
