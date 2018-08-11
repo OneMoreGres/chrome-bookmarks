@@ -56,6 +56,13 @@ function showBookmark(parent, node, pathString) {
     });
     tags.className = "tags";
 
+    var controls = document.createElement('span');;
+    var edit = document.createElement('span');;
+    edit.innerHTML = "edit...";
+    edit.className = "edit";
+    controls.appendChild(edit);
+    controls.className = "controls";
+
     var row1 = document.createElement('div');;
     var row2 = document.createElement('div');;
     
@@ -63,6 +70,7 @@ function showBookmark(parent, node, pathString) {
     row1.appendChild(title);
     row1.appendChild(paths);
     row1.appendChild(tags);
+    row1.appendChild(controls);
     row2.appendChild(url);
 
     var bookmark = document.createElement('li');;
@@ -71,6 +79,13 @@ function showBookmark(parent, node, pathString) {
     bookmark.setAttribute('title', node.title);
     bookmark.appendChild(row1);
     bookmark.appendChild(row2);
+
+    edit.onclick = function(){
+      var edited = window.prompt("Update bookmark", node.title);
+      if (edited == null) return;
+      chrome.bookmarks.update(node.id, { 'title': edited });
+      doSearch();
+    }
 
 	parent.appendChild(bookmark);
 }

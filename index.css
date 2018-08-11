@@ -79,13 +79,14 @@
     font-weight: bold;
 }
 
-.bookmark .path, .bookmark .tag {
+.bookmark .path, .bookmark .tag, .controls .edit {
 	padding: 2px;
 	background:#12aa63;
     border-radius:2px;
     margin: 0 2px 0 0;
 	color:#fff;
     font-size: 10px;
+    cursor: default;
 }
 
 .bookmark .path {
@@ -94,6 +95,10 @@
 
 .bookmark .tag {
 	background:#4185fa;
+}
+
+.controls .edit {
+  background:#74736d;
 }
 
 .label {
