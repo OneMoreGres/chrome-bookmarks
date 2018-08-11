@@ -218,11 +218,14 @@ function removeTagFromAll () {
 
 function init () {
     document.querySelector('#search').oninput = function() { 
-		doSearch();
+		  doSearch();
     };
     document.querySelector('#search').onfocus = function() { 
-		this.value = '';
-        doSearch();
+		  this.select();
+      doSearch();
+    };
+    document.querySelector('#tag-input').onfocus = function() { 
+		  this.select();
     };
     document.querySelector('#add-tag').onclick = addTagToAll;
     document.querySelector('#remove-tag').onclick = removeTagFromAll;
