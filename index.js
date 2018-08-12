@@ -1,4 +1,8 @@
 
+var lastFolder = "";
+const panelId = '1';
+const otherId = '2';
+
 function cleanName(title) {
   var index = title.indexOf('#');
   if (index != -1)
@@ -269,6 +273,47 @@ function addFolderTags() {
   doSearch();
 }
 
+function moveToFolder() {
+  let items = document.querySelectorAll('.bookmark');
+  if (items.length == 0) return;
+
+  let folder = window.prompt("Target folder", lastFolder);
+  if (folder == null) return;
+  if (folder[0] != '/') folder = '/' + folder;
+  if (folder.length == 1) return;
+  lastFolder = folder;
+
+  let find = function (node, parentPath) {
+    if (node.url != null) return null;
+    let currentPath = parentPath;
+    if (node.id != otherId) currentPath += '/' + node.title;
+    if (currentPath == folder) return node;
+    for (let i in node.children) {
+      let found = find(node.children[i], currentPath);
+      if (found != null) return found;
+    }
+    return null;
+  }
+
+  chrome.bookmarks.getSubTree(otherId, function (nodes) {
+    for (let i in nodes) {
+      let newParent = find(nodes[i], "");
+      if (newParent != null) {
+        items.forEach(item => {
+          if (item.parentId == newParent.id) return;
+          chrome.bookmarks.move(item.id, { parentId: newParent.id });
+        });
+
+        document.querySelector('#search').value = folder;
+
+        doSearch();
+        return;
+      }
+    }
+    console.log("no folder found", folder);
+  });
+}
+
 function init() {
   document.querySelector('#search').oninput = function () {
     doSearch();
@@ -283,6 +328,7 @@ function init() {
   document.querySelector('#add-tag').onclick = addTagToAll;
   document.querySelector('#remove-tag').onclick = removeTagFromAll;
   document.querySelector('#add-folder-tags').onclick = addFolderTags;
+  document.querySelector('#move-to-folder').onclick = moveToFolder;
 };
 
 init();
