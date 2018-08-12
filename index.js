@@ -1,4 +1,5 @@
 
+var lastTag = "";
 var lastFolder = "";
 const panelId = '1';
 const otherId = '2';
@@ -198,10 +199,11 @@ function openAll() {
 }
 
 function editionTag() {
-  var tag = document.querySelector("#tag-input").value;
-  if (tag.length == 0) return '';
-  if (tag[0] != '#') tag = '#' + tag;
+  let tag = window.prompt("Tag name", lastTag);
+  if (tag == null) return ''; 
+  if (tag[0] != '#') tag = '#' + tag; 
   if (tag.length == 1) return '';
+  lastTag = tag;
   return tag;
 }
 
@@ -321,9 +323,6 @@ function init() {
   document.querySelector('#search').onfocus = function () {
     this.select();
     doSearch();
-  };
-  document.querySelector('#tag-input').onfocus = function () {
-    this.select();
   };
   document.querySelector('#add-tag').onclick = addTagToAll;
   document.querySelector('#remove-tag').onclick = removeTagFromAll;
