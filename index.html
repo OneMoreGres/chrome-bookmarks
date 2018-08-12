@@ -2,28 +2,33 @@
 <html>
 
 <head>
-    <title>Bookmarks</title>
-    <link rel="stylesheet" href="index.css" />
+  <title>Bookmarks</title>
+  <link rel="stylesheet" href="index.css" />
 </head>
 
 <body>
 
-    <div class="toolbar">
-        <input type="text" id="search" placeholder="Search..." autofocus>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Search..." autofocus>
+    <div class="dropdown">
+      <button class="dropbtn">Actions</button>
+      <div class="dropdown-content">
         <a href="#" id="open-all">Open all</a>
         <a href="#" id="add-tag">Add tag to all</a>
         <a href="#" id="remove-tag">Remove tag from all</a>
         <a href="#" id="add-folder-tags">Add folder tags</a>
         <a href="#" id="move-to-folder">Move to folder</a>
+      </div>
     </div>
+  </div>
 
-    <div id="bookmarks">
-    </div>
-    <div id="no-results">
-        <p>No results</p>
-    </div>
+  <div id="bookmarks">
+  </div>
+  <div id="no-results">
+    <p>No results</p>
+  </div>
 
-    <script src="index.js"></script>
+  <script src="index.js"></script>
 </body>
 
 </html>
