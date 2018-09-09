@@ -132,7 +132,11 @@ function doSearch() {
   var search = getSearch();
 
   var noResults = document.querySelector('#no-results');
-  if (search.folders.length == 0 && search.words.length == 0) {
+  var noFolders = search.folders.length == 0;
+  let minWordLength = 2;
+  var noWords = search.words.length == 0 ||
+    (search.words.length == 1 && search.words[0].length < minWordLength);
+  if (noFolders && noWords) {
     noResults.style.display = 'block';
     return;
   }
