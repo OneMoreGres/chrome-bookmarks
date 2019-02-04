@@ -73,7 +73,7 @@ function showBookmark(parent, node, pathString) {
 
   var controls = document.createElement('span');;
   var edit = document.createElement('span');;
-  edit.innerHTML = "edit...";
+  edit.innerHTML = chrome.i18n.getMessage("editButton");
   edit.className = "edit";
   controls.appendChild(edit);
   controls.className = "controls";
@@ -96,7 +96,7 @@ function showBookmark(parent, node, pathString) {
   bookmark.appendChild(row2);
 
   edit.onclick = function () {
-    var edited = window.prompt("Update bookmark", node.title);
+    var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), node.title);
     if (edited == null) return;
     chrome.bookmarks.update(node.id, { 'title': edited });
     doSearch();
@@ -203,9 +203,9 @@ function openAll() {
 }
 
 function editionTag() {
-  let tag = window.prompt("Tag name", lastTag);
-  if (tag == null) return ''; 
-  if (tag[0] != '#') tag = '#' + tag; 
+  let tag = window.prompt(chrome.i18n.getMessage("newTagPrompt"), lastTag);
+  if (tag == null) return '';
+  if (tag[0] != '#') tag = '#' + tag;
   if (tag.length == 1) return '';
   lastTag = tag;
   return tag;
@@ -283,7 +283,7 @@ function moveToFolder() {
   let items = document.querySelectorAll('.bookmark');
   if (items.length == 0) return;
 
-  let folder = window.prompt("Target folder", lastFolder);
+  let folder = window.prompt(chrome.i18n.getMessage("targetFolderPrompt"), lastFolder);
   if (folder == null) return;
   if (folder[0] != '/') folder = '/' + folder;
   if (folder.length == 1) return;
@@ -320,7 +320,26 @@ function moveToFolder() {
   });
 }
 
+function localizeHtmlPage() {
+  //Localize by replacing __MSG_***__ meta tags
+  var objects = document.getElementsByTagName('html');
+  for (var j = 0; j < objects.length; j++) {
+    var obj = objects[j];
+
+    var valStrH = obj.innerHTML.toString();
+    var valNewH = valStrH.replace(/__MSG_(\w+)__/g, function (match, v1) {
+      return v1 ? chrome.i18n.getMessage(v1) : "";
+    });
+
+    if (valNewH != valStrH) {
+      obj.innerHTML = valNewH;
+    }
+  }
+}
+
 function init() {
+  localizeHtmlPage();
+
   document.querySelector('#search').oninput = function () {
     doSearch();
   };

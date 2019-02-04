@@ -1,0 +1,48 @@
+{
+  "pluginName": {
+    "message": "Закладки с тегами",
+    "description": "TODO"
+  },
+  "pluginDescription": {
+    "message": "Добавляет теги к закладкам. Улучшает поиск и прочее."
+  },
+  "frameTitle": {
+    "message": "Закладки"
+  },
+  "search": {
+    "message": "Поиск..."
+  },
+  "actionsButton": {
+    "message": "Действия"
+  },
+  "openAll": {
+    "message": "Открыть все"
+  },
+  "addTagAll": {
+    "message": "Добавить тег ко всем"
+  },
+  "removeTagAll": {
+    "message": "Удалить тег из всех"
+  },
+  "addFolderTagAll": {
+    "message": "Добавить теги папок"
+  },
+  "moveToFolderAll": {
+    "message": "Перенести в папку"
+  },
+  "notFound": {
+    "message": "Ничего не найдено"
+  },
+  "newTagPrompt": {
+    "message": "Введите тег"
+  },
+  "editPrompt": {
+    "message": "Имя закладки с тегами"
+  },
+  "targetFolderPrompt": {
+    "message": "Целевая папка"
+  },
+  "editButton": {
+    "message": "править..."
+  }
+}

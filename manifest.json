@@ -1,25 +1,25 @@
 {
-    "browser_action": {
-        "default_icon": "icon.png"
-    },
-    "background": {
-        "scripts": [
-            "background.js"
-        ],
-        "persistent": false
-    },
-    "description": "Add tags to bookmarks",
-    "icons": {
-        "16": "icon.png",
-        "32": "icon32.png",
-        "128": "icon128.png"
-    },
-    "manifest_version": 2,
-    "name": "Bookmark tags",
-    "permissions": [
-        "bookmarks",
-        "chrome://favicon/"
+  "name": "__MSG_pluginName__",
+  "description": "__MSG_pluginDescription__",
+  "icons": {
+    "16": "icon.png",
+    "32": "icon32.png",
+    "128": "icon128.png"
+  },
+  "default_locale": "en",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
     ],
-    "short_name": "Bookmark",
-    "version": "1.0"
+    "persistent": false
+  },
+  "permissions": [
+    "bookmarks",
+    "chrome://favicon/"
+  ],
+  "version": "1.0"
 }

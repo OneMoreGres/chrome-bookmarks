@@ -1,0 +1,48 @@
+{
+  "pluginName": {
+    "message": "Bookmark tags",
+    "description": "TODO"
+  },
+  "pluginDescription": {
+    "message": "Add tags to bookmarks. Improves search and more."
+  },
+  "frameTitle": {
+    "message": "Bookmarks"
+  },
+  "search": {
+    "message": "Search..."
+  },
+  "actionsButton": {
+    "message": "Actions"
+  },
+  "openAll": {
+    "message": "Open all"
+  },
+  "addTagAll": {
+    "message": "Add tag to all"
+  },
+  "removeTagAll": {
+    "message": "Remove tag from all"
+  },
+  "addFolderTagAll": {
+    "message": "Add folder tags"
+  },
+  "moveToFolderAll": {
+    "message": "Move to folder"
+  },
+  "notFound": {
+    "message": "No results"
+  },
+  "newTagPrompt": {
+    "message": "Enter tag"
+  },
+  "editPrompt": {
+    "message": "Bookark title with tags"
+  },
+  "targetFolderPrompt": {
+    "message": "Target folder"
+  },
+  "editButton": {
+    "message": "edit..."
+  }
+}
