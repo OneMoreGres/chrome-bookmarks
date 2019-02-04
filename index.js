@@ -347,6 +347,8 @@ function init() {
     this.select();
     doSearch();
   };
+
+  document.querySelector('#open-all').onclick = openAll;
   document.querySelector('#add-tag').onclick = addTagToAll;
   document.querySelector('#remove-tag').onclick = removeTagFromAll;
   document.querySelector('#add-folder-tags').onclick = addFolderTags;
