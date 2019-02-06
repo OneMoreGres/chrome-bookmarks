@@ -87,19 +87,21 @@
   margin: 0 2px 0 0;
   color: #fff;
   font-size: 10px;
-  cursor: default;
 }
 
 .bookmark .path {
   background: #12aa63;
+  cursor: copy;
 }
 
 .bookmark .tag {
   background: #4185fa;
+  cursor: copy;
 }
 
 .controls .edit {
   background: #74736d;
+  cursor: pointer;
 }
 
 .label {
