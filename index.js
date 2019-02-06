@@ -5,16 +5,42 @@ const panelId = '1';
 const otherId = '2';
 
 function cleanName(title) {
-  var index = title.indexOf('#');
+  const index = title.indexOf('#');
   if (index != -1)
     title = title.slice(0, index);
   return title;
 }
 
 function getTags(title) {
-  var matches = title.toLowerCase().match(/#([\d-\w]+)/g);
-  var result = matches ? matches : [];
+  const matches = title.toLowerCase().match(/#([\d-\w]+)/g);
+  const result = matches ? matches : [];
   return result;
+}
+
+function addFolderToFilter(folder) {
+  const addition = ' /' + folder;
+  return function () {
+    document.querySelector('#search').value += addition;
+    doSearch();
+  }
+}
+
+function addTagToFilter(tag) {
+  const addition = ' ' + tag;
+  return function () {
+    document.querySelector('#search').value += addition;
+    doSearch();
+  }
+}
+
+function editBookmark(nodeToEdit) {
+  let node = nodeToEdit;
+  return function () {
+    var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), node.title);
+    if (edited == null) return;
+    chrome.bookmarks.update(node.id, { 'title': edited });
+    doSearch();
+  }
 }
 
 function showBookmark(parent, node, pathString) {
@@ -38,11 +64,7 @@ function showBookmark(parent, node, pathString) {
     path.innerHTML = text;
     path.className = 'path';
     paths.appendChild(path);
-
-    path.onclick = function () {
-      document.querySelector('#search').value += ' /' + text;
-      doSearch();
-    }
+    path.onclick = addFolderToFilter(text);
   });
   paths.className = 'paths';
 
@@ -63,11 +85,7 @@ function showBookmark(parent, node, pathString) {
     tag.innerHTML = text;
     tag.className = "tag";
     tags.appendChild(tag);
-
-    tag.onclick = function () {
-      document.querySelector('#search').value += ' ' + text;
-      doSearch();
-    }
+    tag.onclick = addTagToFilter(text);
   });
   tags.className = "tags";
 
@@ -75,6 +93,7 @@ function showBookmark(parent, node, pathString) {
   var edit = document.createElement('span');;
   edit.innerHTML = chrome.i18n.getMessage("editButton");
   edit.className = "edit";
+  edit.onclick = editBookmark(node);
   controls.appendChild(edit);
   controls.className = "controls";
 
@@ -95,21 +114,14 @@ function showBookmark(parent, node, pathString) {
   bookmark.appendChild(row1);
   bookmark.appendChild(row2);
 
-  edit.onclick = function () {
-    var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), node.title);
-    if (edited == null) return;
-    chrome.bookmarks.update(node.id, { 'title': edited });
-    doSearch();
-  }
-
   parent.appendChild(bookmark);
 }
 
 function getSearch() {
   var search = { folders: [], words: [] };
 
-  var words = document.querySelector('#search').value.split(' ');
-  var folderRe = /^\/.*$/;
+  const words = document.querySelector('#search').value.split(' ');
+  const folderRe = /^\/.*$/;
   words.forEach(function (word) {
     if (word.length == 0
       || (word.length == 1 && (word == '/' || word == '#')))
@@ -125,35 +137,44 @@ function getSearch() {
   return search;
 }
 
+function updateServiceLabels(bookmarks) {
+  var noResults = document.querySelector('#no-results');
+  const count = bookmarks !== null ? bookmarks.childNodes.length : 0;
+  if (count > 0) {
+    noResults.style.display = 'none';
+  }
+  else {
+    noResults.style.display = 'block';
+  }
+}
+
 function doSearch() {
   var bookmarks = document.querySelector('#bookmarks');
   bookmarks.innerHTML = '';
 
-  var search = getSearch();
+  const search = getSearch();
 
-  var noResults = document.querySelector('#no-results');
-  var noFolders = search.folders.length == 0;
-  let minWordLength = 2;
-  var noWords = search.words.length == 0 ||
+  const noFolders = search.folders.length == 0;
+  const minWordLength = 2;
+  const noWords = search.words.length == 0 ||
     (search.words.length == 1 && search.words[0].length < minWordLength);
   if (noFolders && noWords) {
-    noResults.style.display = 'block';
+    updateServiceLabels(null);
     return;
   }
 
-  var list = document.createElement('ul');
-  var filter = function (node, path) {
+  const filter = function (list, node, path) {
     if (!node.url) {
       if (node.children) {
-        var newPath = path + node.title + '/';
-        node.children.forEach(node => filter(node, newPath));
+        const newPath = path + node.title + '/';
+        node.children.forEach(node => filter(list, node, newPath));
       }
     }
     else {
       if (search.words.length > 0) {
-        var ok = search.words.reduce(function (prev, word) {
+        const ok = search.words.reduce(function (prev, word) {
           if (!prev) return false;
-          var isTag = (word[0] == '#');
+          const isTag = (word[0] == '#');
           if (isTag) {
             if (word[word.length - 1] == '#') {
               word = word.slice(0, word.length - 1) + ' ';
@@ -172,7 +193,7 @@ function doSearch() {
       }
 
       if (search.folders.length > 0) {
-        var ok = search.folders.reduce(function (prev, folder) {
+        const ok = search.folders.reduce(function (prev, folder) {
           return prev && path.indexOf(folder) != -1;
         }, true);
         if (!ok) return;
@@ -183,27 +204,22 @@ function doSearch() {
   }
 
   chrome.bookmarks.getTree(function (tree) {
-    tree.forEach(node => filter(node, ""));
+    let list = document.createElement('ul');
+    tree.forEach(node => filter(list, node, ""));
+    bookmarks.appendChild(list);
+    updateServiceLabels(list);
   });
-
-  bookmarks.appendChild(list);
-  if (bookmarks.firstChild.children.length > 0) {
-    noResults.style.display = 'block';
-  }
-  else {
-    noResults.style.display = 'none';
-  }
 }
 
 function openAll() {
-  var items = document.querySelectorAll('.bookmark .title');
+  const items = document.querySelectorAll('.bookmark .title');
   for (var i = 0; i < items.length; ++i) {
     chrome.tabs.create({ 'url': items[i].href });
   };
 }
 
 function editionTag() {
-  let tag = window.prompt(chrome.i18n.getMessage("newTagPrompt"), lastTag);
+  var tag = window.prompt(chrome.i18n.getMessage("newTagPrompt"), lastTag);
   if (tag == null) return '';
   if (tag[0] != '#') tag = '#' + tag;
   if (tag.length == 1) return '';
@@ -216,7 +232,7 @@ function tagRegExp(tag) {
 }
 
 function addTagToAll() {
-  var tag = editionTag();
+  const tag = editionTag();
   if (tag.length == 0) return;
   var re = tagRegExp(tag);
 
@@ -232,18 +248,18 @@ function addTagToAll() {
 }
 
 function removeTagFromAll() {
-  var tag = editionTag();
+  const tag = editionTag();
   if (tag.length == 0) return;
-  var re = tagRegExp(tag);
+  const re = tagRegExp(tag);
 
-  var items = document.querySelectorAll('.bookmark');
+  const items = document.querySelectorAll('.bookmark');
   for (var i = 0; i < items.length; ++i) {
-    var item = items[i];
-    var id = item.getAttribute('id');
+    const item = items[i];
+    const id = item.getAttribute('id');
     var title = item.getAttribute('title');
     if (!id || !title) continue;
 
-    var index = title.search(re);
+    const index = title.search(re);
     if (index == -1) continue;
     title = title.replace(re, ' ');
     chrome.bookmarks.update(id, { 'title': title });
@@ -252,20 +268,20 @@ function removeTagFromAll() {
 }
 
 function addFolderTags() {
-  var items = document.querySelectorAll('.bookmark');
+  const items = document.querySelectorAll('.bookmark');
   for (var i = 0; i < items.length; ++i) {
-    var item = items[i];
-    var id = item.getAttribute('id');
+    const item = items[i];
+    const id = item.getAttribute('id');
     var title = item.getAttribute('title');
     if (!id || !title) continue;
 
     var changed = false;
-    var paths = item.querySelectorAll('.path');
+    const paths = item.querySelectorAll('.path');
     for (var ii = 0; ii < paths.length; ++ii) {
-      var path = paths[ii].innerHTML;
+      const path = paths[ii].innerHTML;
       if (path.indexOf(' ') != -1) continue; // spaces are forbidden
-      var re = tagRegExp(path);
-      var index = title.search(re);
+      const re = tagRegExp(path);
+      const index = title.search(re);
       if (index != -1) continue;
       title = title + ' #' + path;
       changed = true;
@@ -340,9 +356,7 @@ function localizeHtmlPage() {
 function init() {
   localizeHtmlPage();
 
-  document.querySelector('#search').oninput = function () {
-    doSearch();
-  };
+  document.querySelector('#search').oninput = doSearch;
   document.querySelector('#search').onfocus = function () {
     this.select();
     doSearch();
