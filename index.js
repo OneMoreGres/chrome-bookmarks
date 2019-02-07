@@ -140,6 +140,7 @@ function getSearch() {
 function updateServiceLabels(bookmarks) {
   var noResults = document.querySelector('#no-results');
   const count = bookmarks !== null ? bookmarks.childNodes.length : 0;
+  document.querySelector("#foundCount").innerHTML = count;
   if (count > 0) {
     noResults.style.display = 'none';
   }
