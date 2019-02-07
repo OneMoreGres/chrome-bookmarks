@@ -44,5 +44,8 @@
   },
   "editButton": {
     "message": "править..."
+  },
+  "openAllPrompt": {
+    "message": "Открыть $1 ссылок?"
   }
 }

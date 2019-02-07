@@ -44,5 +44,8 @@
   },
   "editButton": {
     "message": "edit..."
+  },
+  "openAllPrompt": {
+    "message": "Open $1 links?"
   }
 }

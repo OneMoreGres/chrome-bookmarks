@@ -226,6 +226,11 @@ function doSearch() {
 
 function openAll() {
   const items = document.querySelectorAll('.bookmark .title');
+  if (items.length > 15) {
+    if (!window.confirm(chrome.i18n.getMessage("openAllPrompt", [items.length]))) {
+      return;
+    }
+  }
   for (var i = 0; i < items.length; ++i) {
     chrome.tabs.create({ 'url': items[i].href });
   };
