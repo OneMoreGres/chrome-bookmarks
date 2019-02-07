@@ -137,10 +137,10 @@ function getSearch() {
   return search;
 }
 
-function updateServiceLabels(bookmarks) {
+function updateServiceLabels(bookmarks, totalCount) {
   var noResults = document.querySelector('#no-results');
   const count = bookmarks !== null ? bookmarks.childNodes.length : 0;
-  document.querySelector("#foundCount").innerHTML = count;
+  document.querySelector("#foundCount").innerHTML = count + '/' + totalCount;
   if (count > 0) {
     noResults.style.display = 'none';
   }
@@ -160,18 +160,19 @@ function doSearch() {
   const noWords = search.words.length == 0 ||
     (search.words.length == 1 && search.words[0].length < minWordLength);
   if (noFolders && noWords) {
-    updateServiceLabels(null);
+    updateServiceLabels(null, '?');
     return;
   }
 
-  const filter = function (list, node, path) {
+  const filter = function (list, counts, node, path) {
     if (!node.url) {
       if (node.children) {
         const newPath = path + node.title + '/';
-        node.children.forEach(node => filter(list, node, newPath));
+        node.children.forEach(node => filter(list, counts, node, newPath));
       }
     }
     else {
+      ++counts.total;
       if (search.words.length > 0) {
         const ok = search.words.reduce(function (prev, word) {
           if (!prev) return false;
@@ -206,10 +207,11 @@ function doSearch() {
 
   chrome.bookmarks.getTree(function (tree) {
     let list = document.createElement('ul');
-    tree.forEach(node => filter(list, node, ""));
+    let counts = { 'total': 1 };
+    tree.forEach(node => filter(list, counts, node, ""));
     bookmarks.innerHTML = '';
     bookmarks.appendChild(list);
-    updateServiceLabels(list);
+    updateServiceLabels(list, counts.total);
   });
 }
 
