@@ -93,6 +93,7 @@ function showBookmark(parent, counts, node, pathString) {
   pathname.className = 'pathname';
   var url = document.createElement('span');
   url.className = 'url';
+  url.title = node.url;
   url.appendChild(hostname);
   url.appendChild(pathname);
 
