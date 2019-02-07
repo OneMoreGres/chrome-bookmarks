@@ -104,7 +104,8 @@
 
 .bookmark .path,
 .bookmark .tag,
-.controls .edit {
+.controls .edit,
+.controls .remove {
   padding: 2px;
   background: #12aa63;
   border-radius: 2px;
@@ -126,6 +127,11 @@
 .controls .edit {
   background: #74736d;
   cursor: pointer;
+}
+
+.controls .remove {
+  background: #ff6666;
+  cursor: no-drop;
 }
 
 .label {

@@ -47,5 +47,11 @@
   },
   "openAllPrompt": {
     "message": "Open $1 links?"
+  },
+  "removeButton": {
+    "message": "remove..."
+  },
+  "removePrompt": {
+    "message": "Remove bookmark $1?"
   }
 }

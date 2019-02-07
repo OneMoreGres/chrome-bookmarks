@@ -47,5 +47,11 @@
   },
   "openAllPrompt": {
     "message": "Открыть $1 ссылок?"
+  },
+  "removeButton": {
+    "message": "удалить..."
+  },
+  "removePrompt": {
+    "message": "Удалить закладку $1?"
   }
 }

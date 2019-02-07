@@ -43,6 +43,17 @@ function editBookmark(nodeToEdit) {
   }
 }
 
+function removeBookmark(nodeToRemove) {
+  let node = nodeToRemove;
+  return function () {
+    if (!window.confirm(chrome.i18n.getMessage("removePrompt", [node.title]))) {
+      return;
+    }
+    chrome.bookmarks.remove(node.id);
+    doSearch();
+  }
+}
+
 function showBookmark(parent, counts, node, pathString) {
   if (!node.url || node.url.substring(0, 11) == "javascript:") {
     return false;
@@ -85,9 +96,9 @@ function showBookmark(parent, counts, node, pathString) {
   url.appendChild(hostname);
   url.appendChild(pathname);
 
-  var tags = document.createElement('span');;
+  var tags = document.createElement('span');
   getTags(node.title).forEach(function (text) {
-    var tag = document.createElement('span');;
+    var tag = document.createElement('span');
     tag.innerHTML = text;
     tag.className = "tag";
     tags.appendChild(tag);
@@ -95,16 +106,23 @@ function showBookmark(parent, counts, node, pathString) {
   });
   tags.className = "tags";
 
-  var controls = document.createElement('span');;
-  var edit = document.createElement('span');;
+  var controls = document.createElement('span');
+  controls.className = "controls";
+
+  var edit = document.createElement('span');
   edit.innerHTML = chrome.i18n.getMessage("editButton");
   edit.className = "edit";
   edit.onclick = editBookmark(node);
   controls.appendChild(edit);
-  controls.className = "controls";
 
-  var row1 = document.createElement('div');;
-  var row2 = document.createElement('div');;
+  var remove = document.createElement('span');
+  remove.innerHTML = chrome.i18n.getMessage("removeButton");
+  remove.className = "remove";
+  remove.onclick = removeBookmark(node);
+  controls.appendChild(remove);
+
+  var row1 = document.createElement('div');
+  var row2 = document.createElement('div');
 
   row1.appendChild(icon);
   row1.appendChild(title);
@@ -113,7 +131,7 @@ function showBookmark(parent, counts, node, pathString) {
   row1.appendChild(controls);
   row2.appendChild(url);
 
-  var bookmark = document.createElement('li');;
+  var bookmark = document.createElement('li');
   bookmark.className = "bookmark";
   bookmark.setAttribute('id', node.id);
   bookmark.setAttribute('title', node.title);
