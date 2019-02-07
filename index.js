@@ -43,9 +43,9 @@ function editBookmark(nodeToEdit) {
   }
 }
 
-function showBookmark(parent, node, pathString) {
+function showBookmark(parent, counts, node, pathString) {
   if (!node.url || node.url.substring(0, 11) == "javascript:") {
-    return;
+    return false;
   }
 
   var icon = document.createElement('img');
@@ -54,7 +54,13 @@ function showBookmark(parent, node, pathString) {
 
   var title = document.createElement('a');
   title.href = node.url;
-  title.text = cleanName(node.title);
+  if (counts.matched < 10) {
+    const hotkeyNumber = counts.matched < 9 ? counts.matched + 1 : 0;
+    title.text = hotkeyNumber + '. ' + cleanName(node.title);
+  }
+  else {
+    title.text = cleanName(node.title);
+  }
   title.className = 'title';
 
   var paths = document.createElement('span');
@@ -115,6 +121,7 @@ function showBookmark(parent, node, pathString) {
   bookmark.appendChild(row2);
 
   parent.appendChild(bookmark);
+  return true;
 }
 
 function getSearch() {
@@ -201,13 +208,15 @@ function doSearch() {
         if (!ok) return;
       }
 
-      showBookmark(list, node, path);
+      if (showBookmark(list, counts, node, path)) {
+        ++counts.matched;
+      }
     }
   }
 
   chrome.bookmarks.getTree(function (tree) {
     let list = document.createElement('ul');
-    let counts = { 'total': 1 };
+    let counts = { 'total': 1, 'matched': 0 };
     tree.forEach(node => filter(list, counts, node, ""));
     bookmarks.innerHTML = '';
     bookmarks.appendChild(list);
@@ -220,6 +229,12 @@ function openAll() {
   for (var i = 0; i < items.length; ++i) {
     chrome.tabs.create({ 'url': items[i].href });
   };
+}
+
+function openNthLink(index) {
+  const items = document.querySelectorAll('.bookmark .title');
+  if (index >= items.length) { return; }
+  chrome.tabs.create({ 'url': items[index].href });
 }
 
 function editionTag() {
@@ -371,6 +386,21 @@ function init() {
   document.querySelector('#remove-tag').onclick = removeTagFromAll;
   document.querySelector('#add-folder-tags').onclick = addFolderTags;
   document.querySelector('#move-to-folder').onclick = moveToFolder;
+
+  document.onkeydown = function (e) {
+    if (!e.ctrlKey) { return; }
+
+    if (e.keyCode == 13) { // enter
+      openAll();
+      return false;
+    }
+
+    if (e.keyCode >= 48 && e.keyCode <= 57) { // 0 - 9
+      let index = e.keyCode - 49;
+      openNthLink(index >= 0 ? index : 9);
+      return false;
+    }
+  };
 };
 
 init();
