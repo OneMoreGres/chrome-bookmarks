@@ -207,6 +207,7 @@ function doSearch() {
   chrome.bookmarks.getTree(function (tree) {
     let list = document.createElement('ul');
     tree.forEach(node => filter(list, node, ""));
+    bookmarks.innerHTML = '';
     bookmarks.appendChild(list);
     updateServiceLabels(list);
   });
