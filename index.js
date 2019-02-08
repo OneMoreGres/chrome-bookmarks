@@ -3,6 +3,15 @@ var lastTag = "";
 var lastFolder = "";
 const panelId = '1';
 const otherId = '2';
+var urlParser = document.createElement('a');
+
+function getNthParent(element, i) {
+  while (i > 0) {
+    element = element.parentElement;
+    --i;
+  }
+  return element;
+}
 
 function cleanName(title) {
   const index = title.indexOf('#');
@@ -18,129 +27,80 @@ function getTags(title) {
 }
 
 function addFolderToFilter(folder) {
-  const addition = ' /' + folder;
-  return function () {
-    document.querySelector('#search').value += addition;
-    doSearch();
-  }
+  document.querySelector('#search').value += ' /' + folder;
+  doSearch();
 }
 
 function addTagToFilter(tag) {
-  const addition = ' ' + tag;
-  return function () {
-    document.querySelector('#search').value += addition;
-    doSearch();
-  }
+  document.querySelector('#search').value += ' ' + tag;
+  doSearch();
 }
 
-function editBookmark(nodeToEdit) {
-  let node = nodeToEdit;
-  return function () {
-    var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), node.title);
-    if (edited == null) return;
-    chrome.bookmarks.update(node.id, { 'title': edited });
-    doSearch();
-  }
+function editBookmark(id, title) {
+  if (!(id > 0)) return;
+  var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), [title]);
+  if (edited == null) return;
+  chrome.bookmarks.update(id, { 'title': edited });
+  doSearch();
 }
 
-function removeBookmark(nodeToRemove) {
-  let node = nodeToRemove;
-  return function () {
-    if (!window.confirm(chrome.i18n.getMessage("removePrompt", [node.title]))) {
-      return;
-    }
-    chrome.bookmarks.remove(node.id);
-    doSearch();
-  }
+function removeBookmark(id, title) {
+  if (!(id > 0)) return;
+  if (!window.confirm(chrome.i18n.getMessage("removePrompt", [title]))) return;
+  chrome.bookmarks.remove(id);
+  doSearch();
 }
 
-function showBookmark(parent, counts, node, pathString) {
+function showBookmark(node, pathString, index) {
   if (!node.url || node.url.substring(0, 11) == "javascript:") {
-    return false;
+    return "";
   }
 
-  var icon = document.createElement('img');
-  icon.src = 'chrome://favicon/' + node.url;
-  icon.className = 'favicon';
-
-  var title = document.createElement('a');
-  title.href = node.url;
-  if (counts.matched < 10) {
-    const hotkeyNumber = counts.matched < 9 ? counts.matched + 1 : 0;
-    title.text = hotkeyNumber + '. ' + cleanName(node.title);
+  var title;
+  if (index < 10) {
+    const hotkeyNumber = index < 9 ? index + 1 : 0;
+    title = hotkeyNumber + '. ' + cleanName(node.title);
   }
   else {
-    title.text = cleanName(node.title);
+    title = cleanName(node.title);
   }
-  title.className = 'title';
 
-  var paths = document.createElement('span');
+  var folders = "";
   pathString.split('/').forEach(function (text) {
     if (text.length == 0) return;
-    var path = document.createElement('span');
-    path.innerHTML = text;
-    path.className = 'path';
-    paths.appendChild(path);
-    path.onclick = addFolderToFilter(text);
+    folders += `<span class="path">${text}</span>`;
   });
-  paths.className = 'paths';
 
-  var hostname = document.createElement('span');
-  hostname.innerHTML = title.hostname;
-  hostname.className = 'hostname';
-  var pathname = document.createElement('span');
-  pathname.innerHTML = title.pathname;
-  pathname.className = 'pathname';
-  var url = document.createElement('span');
-  url.className = 'url';
-  url.title = node.url;
-  url.appendChild(hostname);
-  url.appendChild(pathname);
-
-  var tags = document.createElement('span');
+  var tags = "";
   getTags(node.title).forEach(function (text) {
-    var tag = document.createElement('span');
-    tag.innerHTML = text;
-    tag.className = "tag";
-    tags.appendChild(tag);
-    tag.onclick = addTagToFilter(text);
+    if (text.length == 0) return;
+    tags += `<span class="tag">${text}</span>`;
   });
-  tags.className = "tags";
 
-  var controls = document.createElement('span');
-  controls.className = "controls";
+  urlParser.href = node.url;
 
-  var edit = document.createElement('span');
-  edit.innerHTML = chrome.i18n.getMessage("editButton");
-  edit.className = "edit";
-  edit.onclick = editBookmark(node);
-  controls.appendChild(edit);
+  const row1 = `<div>
+  <img src="chrome://favicon/${node.url}" class="favicon"/>
+  <a href=${node.url} class="title">${title}</a>
+  <span class="paths">${folders}</span>
+  <span class="tags">${tags}</span>
+  <span class="controls">
+   <span class="edit">${chrome.i18n.getMessage("editButton")}</span>
+   <span class="remove">${chrome.i18n.getMessage("removeButton")}</span>
+  </span>
+  </div>`;
 
-  var remove = document.createElement('span');
-  remove.innerHTML = chrome.i18n.getMessage("removeButton");
-  remove.className = "remove";
-  remove.onclick = removeBookmark(node);
-  controls.appendChild(remove);
+  const row2 = `<div>
+  <span class="url" title="${node.url}">
+   <span class="hostname">${urlParser.hostname}</span>
+   <span class="pathname">${urlParser.pathname}</span>
+  </span>
+  </div>`;
 
-  var row1 = document.createElement('div');
-  var row2 = document.createElement('div');
-
-  row1.appendChild(icon);
-  row1.appendChild(title);
-  row1.appendChild(paths);
-  row1.appendChild(tags);
-  row1.appendChild(controls);
-  row2.appendChild(url);
-
-  var bookmark = document.createElement('li');
-  bookmark.className = "bookmark";
-  bookmark.setAttribute('id', node.id);
-  bookmark.setAttribute('title', node.title);
-  bookmark.appendChild(row1);
-  bookmark.appendChild(row2);
-
-  parent.appendChild(bookmark);
-  return true;
+  return `<li class="bookmark" id=${node.id} title="${node.title}">
+  ${row1}
+  ${row2}
+  </li>`;
 }
 
 function getSearch() {
@@ -163,11 +123,10 @@ function getSearch() {
   return search;
 }
 
-function updateServiceLabels(bookmarks, totalCount) {
+function updateServiceLabels(matched, total) {
+  document.querySelector("#foundCount").innerHTML = matched + '/' + total;
   var noResults = document.querySelector('#no-results');
-  const count = bookmarks !== null ? bookmarks.childNodes.length : 0;
-  document.querySelector("#foundCount").innerHTML = count + '/' + totalCount;
-  if (count > 0) {
+  if (matched > 0) {
     noResults.style.display = 'none';
   }
   else {
@@ -175,10 +134,52 @@ function updateServiceLabels(bookmarks, totalCount) {
   }
 }
 
-function doSearch() {
-  var bookmarks = document.querySelector('#bookmarks');
-  bookmarks.innerHTML = '';
+function filterBookmarks(node, path, search, state) {
+  if (!node.url) {
+    if (node.children) {
+      const newPath = path + node.title + '/';
+      node.children.forEach(node => filterBookmarks(node, newPath, search, state));
+    }
+    return;
+  }
 
+  ++state.total;
+  if (search.words.length > 0) {
+    const ok = search.words.reduce(function (prev, word) {
+      if (!prev) return false;
+      const isTag = (word[0] == '#');
+      if (isTag) {
+        if (word[word.length - 1] == '#') {
+          word = word.slice(0, word.length - 1) + ' ';
+          return (node.title + ' ').indexOf(word) != -1;
+        }
+        else {
+          return node.title.indexOf(word) != -1;
+        }
+      }
+      else {
+        return (node.title.indexOf(word) != -1
+          || node.url.indexOf(word) != -1);
+      }
+    }, true);
+    if (!ok) return;
+  }
+
+  if (search.folders.length > 0) {
+    const ok = search.folders.reduce(function (prev, folder) {
+      return prev && path.indexOf(folder) != -1;
+    }, true);
+    if (!ok) return;
+  }
+
+  const added = showBookmark(node, path, state.index);
+  if (added.length > 0) {
+    state.text += added;
+    ++state.index;
+  }
+}
+
+function doSearch() {
   const search = getSearch();
 
   const noFolders = search.folders.length == 0;
@@ -186,60 +187,36 @@ function doSearch() {
   const noWords = search.words.length == 0 ||
     (search.words.length == 1 && search.words[0].length < minWordLength);
   if (noFolders && noWords) {
-    updateServiceLabels(null, '?');
+    document.querySelector('#bookmarks').innerHTML = '';
+    updateServiceLabels(0, 0);
     return;
   }
 
-  const filter = function (list, counts, node, path) {
-    if (!node.url) {
-      if (node.children) {
-        const newPath = path + node.title + '/';
-        node.children.forEach(node => filter(list, counts, node, newPath));
-      }
-    }
-    else {
-      ++counts.total;
-      if (search.words.length > 0) {
-        const ok = search.words.reduce(function (prev, word) {
-          if (!prev) return false;
-          const isTag = (word[0] == '#');
-          if (isTag) {
-            if (word[word.length - 1] == '#') {
-              word = word.slice(0, word.length - 1) + ' ';
-              return (node.title + ' ').indexOf(word) != -1;
-            }
-            else {
-              return node.title.indexOf(word) != -1;
-            }
-          }
-          else {
-            return (node.title.indexOf(word) != -1
-              || node.url.indexOf(word) != -1);
-          }
-        }, true);
-        if (!ok) return;
-      }
-
-      if (search.folders.length > 0) {
-        const ok = search.folders.reduce(function (prev, folder) {
-          return prev && path.indexOf(folder) != -1;
-        }, true);
-        if (!ok) return;
-      }
-
-      if (showBookmark(list, counts, node, path)) {
-        ++counts.matched;
-      }
-    }
-  }
-
   chrome.bookmarks.getTree(function (tree) {
-    let list = document.createElement('ul');
-    let counts = { 'total': 1, 'matched': 0 };
-    tree.forEach(node => filter(list, counts, node, ""));
-    bookmarks.innerHTML = '';
-    bookmarks.appendChild(list);
-    updateServiceLabels(list, counts.total);
+    let state = { 'text': '', 'index': 0 , 'total': 0 };
+    tree.forEach(node => filterBookmarks(node, "", search, state));
+
+    document.querySelector('#bookmarks').innerHTML = `<ul>${state.text}</ul>`;
+
+    let bookmarks = document.querySelectorAll('.bookmark');
+    bookmarks.forEach(function (node) {
+      node.querySelectorAll(".path").forEach(path => path.onclick = function (e) {
+        addFolderToFilter(e.target.innerText);
+      });
+      node.querySelectorAll(".tag").forEach(tag => tag.onclick = function (e) {
+        addTagToFilter(e.target.innerText);
+      });
+      node.querySelector(".edit").onclick = function (e) {
+        const li = getNthParent(e.target, 3);
+        editBookmark(li.id, li.title)
+      };
+      node.querySelector(".remove").onclick = function (e) {
+        const li = getNthParent(e.target, 3);
+        removeBookmark(li.id, li.title)
+      };
+    });
+
+    updateServiceLabels(state.index, state.total);
   });
 }
 
