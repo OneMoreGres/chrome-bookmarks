@@ -4,6 +4,9 @@ var lastFolder = "";
 const panelId = '1';
 const otherId = '2';
 var urlParser = document.createElement('a');
+var searchTimeout = null;
+const searchDelay = 200; //ms
+var delaySearch = true;
 
 function getNthParent(element, i) {
   while (i > 0) {
@@ -182,6 +185,14 @@ function filterBookmarks(node, path, search, state) {
 }
 
 function doSearch() {
+  if (delaySearch) {
+    if (searchTimeout != null) { clearTimeout(searchTimeout); }
+    searchTimeout = setTimeout(function () { delaySearch = false; doSearch(); },
+      searchDelay);
+    return;
+  }
+  delaySearch = true;
+
   const search = getSearch();
 
   const noFolders = search.folders.length == 0;
@@ -195,7 +206,7 @@ function doSearch() {
   }
 
   chrome.bookmarks.getTree(function (tree) {
-    let state = { 'text': '', 'index': 0 , 'total': 0 };
+    let state = { 'text': '', 'index': 0, 'total': 0 };
     tree.forEach(node => filterBookmarks(node, "", search, state));
 
     document.querySelector('#bookmarks').innerHTML = `<ul>${state.text}</ul>`;
