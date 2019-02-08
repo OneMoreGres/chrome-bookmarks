@@ -53,5 +53,8 @@
   },
   "removePrompt": {
     "message": "Remove bookmark $1?"
+  },
+  "inputHint": {
+    "message": "Search in title and url ('/name' - folder, '#name' - tag)"
   }
 }

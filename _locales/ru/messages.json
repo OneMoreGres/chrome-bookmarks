@@ -53,5 +53,8 @@
   },
   "removePrompt": {
     "message": "Удалить закладку $1?"
+  },
+  "inputHint": {
+    "message": "Поиск по заголовкам и url ('/name' - папка, '#name' - тег)"
   }
 }
