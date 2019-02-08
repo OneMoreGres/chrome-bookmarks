@@ -369,11 +369,6 @@ function init() {
   localizeHtmlPage();
 
   document.querySelector('#search').oninput = doSearch;
-  document.querySelector('#search').onfocus = function () {
-    this.select();
-    doSearch();
-  };
-
   document.querySelector('#open-all').onclick = openAll;
   document.querySelector('#add-tag').onclick = addTagToAll;
   document.querySelector('#remove-tag').onclick = removeTagFromAll;
