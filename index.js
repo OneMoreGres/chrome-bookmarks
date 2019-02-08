@@ -26,28 +26,30 @@ function getTags(title) {
   return result;
 }
 
-function addFolderToFilter(folder) {
-  document.querySelector('#search').value += ' /' + folder;
+function addFolderToFilter(event) {
+  document.querySelector('#search').value += ' /' + event.target.innerText;
   doSearch();
 }
 
-function addTagToFilter(tag) {
-  document.querySelector('#search').value += ' ' + tag;
+function addTagToFilter(event) {
+  document.querySelector('#search').value += ' ' + event.target.innerText;
   doSearch();
 }
 
-function editBookmark(id, title) {
-  if (!(id > 0)) return;
-  var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), [title]);
+function editBookmark(event) {
+  const li = getNthParent(event.target, 3);
+  if (!(li.id > 0)) return;
+  var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), [li.title]);
   if (edited == null) return;
-  chrome.bookmarks.update(id, { 'title': edited });
+  chrome.bookmarks.update(li.id, { 'title': edited });
   doSearch();
 }
 
-function removeBookmark(id, title) {
-  if (!(id > 0)) return;
-  if (!window.confirm(chrome.i18n.getMessage("removePrompt", [title]))) return;
-  chrome.bookmarks.remove(id);
+function removeBookmark(event) {
+  const li = getNthParent(event.target, 3);
+  if (!(li.id > 0)) return;
+  if (!window.confirm(chrome.i18n.getMessage("removePrompt", [li.title]))) return;
+  chrome.bookmarks.remove(li.id);
   doSearch();
 }
 
@@ -200,20 +202,10 @@ function doSearch() {
 
     let bookmarks = document.querySelectorAll('.bookmark');
     bookmarks.forEach(function (node) {
-      node.querySelectorAll(".path").forEach(path => path.onclick = function (e) {
-        addFolderToFilter(e.target.innerText);
-      });
-      node.querySelectorAll(".tag").forEach(tag => tag.onclick = function (e) {
-        addTagToFilter(e.target.innerText);
-      });
-      node.querySelector(".edit").onclick = function (e) {
-        const li = getNthParent(e.target, 3);
-        editBookmark(li.id, li.title)
-      };
-      node.querySelector(".remove").onclick = function (e) {
-        const li = getNthParent(e.target, 3);
-        removeBookmark(li.id, li.title)
-      };
+      node.querySelectorAll(".path").forEach(path => path.onclick = addFolderToFilter);
+      node.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
+      node.querySelector(".edit").onclick = editBookmark;
+      node.querySelector(".remove").onclick = removeBookmark;
     });
 
     updateServiceLabels(state.index, state.total);
