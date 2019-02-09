@@ -56,5 +56,8 @@
   },
   "inputHint": {
     "message": "Поиск по заголовкам и url ('/name' - папка, '#name' - тег)"
+  },
+  "showAllTags": {
+    "message": "Показать все теги"
   }
 }

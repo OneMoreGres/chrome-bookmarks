@@ -376,6 +376,31 @@ function localizeHtmlPage() {
   }
 }
 
+function parseTags(node, tags) {
+  if (node.url) {
+    getTags(node.title).forEach(tag =>
+      tags[tag] = tags.hasOwnProperty(tag) ? tags[tag] + 1 : 1);
+    return;
+  }
+  if (node.children) {
+    node.children.forEach(node => parseTags(node, tags));
+  }
+}
+
+function showAllTags() {
+  chrome.bookmarks.getTree(function (tree) {
+    let tags = {};
+    tree.forEach(node => parseTags(node, tags));
+    const tagNames = Object.keys(tags).sort();
+    const tagsHtml = tagNames.reduce((sum, name) =>
+      sum + `<li><span class="tag">${name}</span><span>${tags[name]}</span></li>`,
+      "");
+    document.querySelector("#bookmarks").innerHTML = `<ul>${tagsHtml}</ul>`;
+    document.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
+    updateServiceLabels(tagNames.length, tagNames.length);
+  });
+}
+
 function init() {
   localizeHtmlPage();
 
@@ -385,6 +410,7 @@ function init() {
   document.querySelector('#remove-tag').onclick = removeTagFromAll;
   document.querySelector('#add-folder-tags').onclick = addFolderTags;
   document.querySelector('#move-to-folder').onclick = moveToFolder;
+  document.querySelector('#show-all-tags').onclick = showAllTags;
 
   document.onkeydown = function (e) {
     if (!e.ctrlKey) { return; }

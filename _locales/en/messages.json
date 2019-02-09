@@ -56,5 +56,8 @@
   },
   "inputHint": {
     "message": "Search in title and url ('/name' - folder, '#name' - tag)"
+  },
+  "showAllTags": {
+    "message": "Show all tags"
   }
 }

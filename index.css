@@ -145,6 +145,17 @@
   background: #aeaeae;
 }
 
+#bookmarks .tag {
+  display: inline-block;
+  padding: 2px;
+  border-radius: 2px;
+  margin: 0 2px 2px 0;
+  color: #fff;
+  font-size: 10px;
+  background: #4185fa;
+  cursor: pointer;
+}
+
 /* Style The Dropdown Button */
 
 .dropbtn {
