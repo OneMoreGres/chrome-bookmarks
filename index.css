@@ -102,6 +102,11 @@
   font-weight: bold;
 }
 
+.bookmark .restUrl {
+  font-weight: lighter;
+  font-size: smaller;
+}
+
 .bookmark .path,
 .bookmark .tag,
 .controls .edit,

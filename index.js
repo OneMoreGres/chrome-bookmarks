@@ -56,7 +56,7 @@ function removeBookmark(event) {
   doSearch();
 }
 
-function showBookmark(node, pathString, index) {
+function showBookmark(node, pathString, index, fullUrl=false) {
   if (!node.url || node.url.substring(0, 11) == "javascript:") {
     return "";
   }
@@ -95,16 +95,20 @@ function showBookmark(node, pathString, index) {
   </span>
   </div>`;
 
-  const row2 = `<div>
+  const row2head = `<div>
   <span class="url" title="${node.url}">
    <span class="hostname">${urlParser.hostname}</span>
-   <span class="pathname">${urlParser.pathname}</span>
+   <span class="pathname">${urlParser.pathname}</span>`;
+  const row2mid = fullUrl
+    ? `<span class="restUrl">${urlParser.hash}${urlParser.search}</span>`
+    : '';
+  const row2tail = `
   </span>
   </div>`;
 
   return `<li class="bookmark" id=${node.id} title="${node.title}">
   ${row1}
-  ${row2}
+  ${row2head}${row2mid}${row2tail}
   </li>`;
 }
 
@@ -425,7 +429,7 @@ function showDuplicates() {
       if (nodes.length < 2) return sum;
       count += nodes.length;
       return sum + nodes.reduce((sum, node) =>
-        sum + showBookmark(node, node.path, 999), "");
+        sum + showBookmark(node, node.path, 999, true), "");
     }, "");
     document.querySelector("#bookmarks").innerHTML = `<ul>${html}</ul>`;
     updateBookmarkHandlers();
