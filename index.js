@@ -139,6 +139,13 @@ function updateServiceLabels(matched, total) {
   }
 }
 
+function updateBookmarkHandlers() {
+  document.querySelectorAll(".bookmark .path").forEach(e => e.onclick = addFolderToFilter);
+  document.querySelectorAll(".bookmark .tag").forEach(e => e.onclick = addTagToFilter);
+  document.querySelectorAll(".bookmark .edit").forEach(e => e.onclick = editBookmark);
+  document.querySelectorAll(".bookmark .remove").forEach(e => e.onclick = removeBookmark);
+}
+
 function filterBookmarks(node, path, search, state) {
   if (!node.url) {
     if (node.children) {
@@ -208,17 +215,8 @@ function doSearch() {
   chrome.bookmarks.getTree(function (tree) {
     let state = { 'text': '', 'index': 0, 'total': 0 };
     tree.forEach(node => filterBookmarks(node, "", search, state));
-
     document.querySelector('#bookmarks').innerHTML = `<ul>${state.text}</ul>`;
-
-    let bookmarks = document.querySelectorAll('.bookmark');
-    bookmarks.forEach(function (node) {
-      node.querySelectorAll(".path").forEach(path => path.onclick = addFolderToFilter);
-      node.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
-      node.querySelector(".edit").onclick = editBookmark;
-      node.querySelector(".remove").onclick = removeBookmark;
-    });
-
+    updateBookmarkHandlers();
     updateServiceLabels(state.index, state.total);
   });
 }
