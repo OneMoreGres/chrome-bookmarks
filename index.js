@@ -399,6 +399,40 @@ function showAllTags() {
   });
 }
 
+function findDuplicates(node, path, state) {
+  if (node.url) {
+    urlParser.href = node.url;
+    const key = urlParser.hostname + urlParser.pathname;
+    node.path = path;
+    state.hasOwnProperty(key) ? state[key].push(node) : state[key] = [node];
+    return;
+  }
+
+  if (node.children) {
+    const newPath = path + node.title + '/';
+    node.children.forEach(node => findDuplicates(node, newPath, state));
+  }
+}
+
+function showDuplicates() {
+  chrome.bookmarks.getTree(function (tree) {
+    let state = {};
+    tree.forEach(node => findDuplicates(node, "", state));
+    const names = Object.keys(state).sort();
+    let count = 0;
+    const html = names.reduce(function (sum, name) {
+      const nodes = state[name];
+      if (nodes.length < 2) return sum;
+      count += nodes.length;
+      return sum + nodes.reduce((sum, node) =>
+        sum + showBookmark(node, node.path, 999), "");
+    }, "");
+    document.querySelector("#bookmarks").innerHTML = `<ul>${html}</ul>`;
+    updateBookmarkHandlers();
+    updateServiceLabels(count, 0);
+  });
+}
+
 function init() {
   localizeHtmlPage();
 
@@ -409,6 +443,7 @@ function init() {
   document.querySelector('#add-folder-tags').onclick = addFolderTags;
   document.querySelector('#move-to-folder').onclick = moveToFolder;
   document.querySelector('#show-all-tags').onclick = showAllTags;
+  document.querySelector('#show-duplicates').onclick = showDuplicates;
 
   document.onkeydown = function (e) {
     if (!e.ctrlKey) { return; }

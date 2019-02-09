@@ -59,5 +59,8 @@
   },
   "showAllTags": {
     "message": "Show all tags"
+  },
+  "showDuplicates": {
+    "message": "Show possible duplicates"
   }
 }
