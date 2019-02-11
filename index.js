@@ -57,7 +57,7 @@ function removeBookmark(event) {
   refreshFunction();
 }
 
-function showBookmark(node, pathString, index, fullUrl=false) {
+function showBookmark(node, pathString, index, fullUrl = false) {
   if (!node.url || node.url.substring(0, 11) == "javascript:") {
     return "";
   }
@@ -441,6 +441,16 @@ function showDuplicates() {
 
 function init() {
   localizeHtmlPage();
+
+  var currentId = null;
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    if (tabs.length == 0) return;
+    currentId = tabs[0].id;
+  });
+  chrome.tabs.onActivated.addListener(function (tab) {
+    if (currentId != tab.tabId) return;
+    document.querySelector('#search').focus();
+  });
 
   document.querySelector('#search').oninput = doSearch;
   document.querySelector('#open-all').onclick = openAll;
