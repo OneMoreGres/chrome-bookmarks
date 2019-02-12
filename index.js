@@ -397,7 +397,7 @@ function showAllTags() {
     tree.forEach(node => parseTags(node, tags));
     const tagNames = Object.keys(tags).sort();
     const tagsHtml = tagNames.reduce((sum, name) =>
-      sum + `<li><span class="tag">${name}</span><span>${tags[name]}</span></li>`,
+      sum + `<li class="tagOnly"><span class="tag">${name}</span><span>${tags[name]}</span></li>`,
       "");
     document.querySelector("#bookmarks").innerHTML = `<ul>${tagsHtml}</ul>`;
     document.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);

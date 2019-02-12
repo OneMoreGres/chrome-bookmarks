@@ -161,6 +161,14 @@
   cursor: pointer;
 }
 
+#bookmarks li.tagOnly {
+  display: block;
+  width: 20%;
+  float: left;
+  background: #fffefa;
+}
+
+
 /* Style The Dropdown Button */
 
 .dropbtn {
