@@ -208,6 +208,10 @@
   display: block;
 }
 
+.dropdown-content a.disabled {
+  color: grey;
+}
+
 /* Change color of dropdown links on hover */
 
 .dropdown-content a:hover {

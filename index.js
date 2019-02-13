@@ -221,7 +221,7 @@ function doSearch() {
   }
 
   chrome.bookmarks.getTree(function (tree) {
-    currentMode = modeBookmark;
+    setMode(modeBookmark);
     let state = { 'text': '', 'index': 0, 'total': 0 };
     tree.forEach(node => filterBookmarks(node, "", search, state));
     document.querySelector('#bookmarks').innerHTML = `<ul>${state.text}</ul>`;
@@ -231,6 +231,7 @@ function doSearch() {
 }
 
 function openAll() {
+  if (currentMode != modeBookmark) return;
   const items = document.querySelectorAll('.bookmark .title');
   if (items.length > 15) {
     if (!window.confirm(chrome.i18n.getMessage("openAllPrompt", [items.length]))) {
@@ -243,6 +244,7 @@ function openAll() {
 }
 
 function openNthLink(index) {
+  if (currentMode != modeBookmark) return;
   const items = document.querySelectorAll('.bookmark .title');
   if (index >= items.length) { return; }
   chrome.tabs.create({ 'url': items[index].href });
@@ -262,6 +264,7 @@ function tagRegExp(tag) {
 }
 
 function addTagToAll() {
+  if (currentMode != modeBookmark) return;
   const tag = editionTag();
   if (tag.length == 0) return;
   var re = tagRegExp(tag);
@@ -278,6 +281,7 @@ function addTagToAll() {
 }
 
 function removeTagFromAll() {
+  if (currentMode != modeBookmark) return;
   const tag = editionTag();
   if (tag.length == 0) return;
   const re = tagRegExp(tag);
@@ -298,6 +302,7 @@ function removeTagFromAll() {
 }
 
 function addFolderTags() {
+  if (currentMode != modeBookmark) return;
   const items = document.querySelectorAll('.bookmark');
   for (var i = 0; i < items.length; ++i) {
     const item = items[i];
@@ -326,6 +331,7 @@ function addFolderTags() {
 }
 
 function moveToFolder() {
+  if (currentMode != modeBookmark) return;
   let items = document.querySelectorAll('.bookmark');
   if (items.length == 0) return;
 
@@ -396,7 +402,7 @@ function parseTags(node, tags) {
 
 function showAllTags() {
   chrome.bookmarks.getTree(function (tree) {
-    currentMode = modeTags;
+    setMode(modeTags);
     let tags = {};
     tree.forEach(node => parseTags(node, tags));
     const tagNames = Object.keys(tags).sort();
@@ -426,7 +432,7 @@ function findDuplicates(node, path, state) {
 
 function showDuplicates() {
   chrome.bookmarks.getTree(function (tree) {
-    currentMode = modeDublicates;
+    setMode(modeDublicates);
     let state = {};
     tree.forEach(node => findDuplicates(node, "", state));
     const names = Object.keys(state).sort();
@@ -442,6 +448,13 @@ function showDuplicates() {
     updateBookmarkHandlers(showDuplicates);
     updateServiceLabels(count, 0);
   });
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  let controls = document.querySelectorAll("#open-all, #add-tag, #remove-tag, #add-folder-tags, #move-to-folder");
+  controls.forEach(node => currentMode == modeBookmark
+    ? node.classList.remove("disabled") : node.classList.add("disabled"));
 }
 
 function init() {
@@ -465,6 +478,8 @@ function init() {
   document.querySelector('#move-to-folder').onclick = moveToFolder;
   document.querySelector('#show-all-tags').onclick = showAllTags;
   document.querySelector('#show-duplicates').onclick = showDuplicates;
+
+  setMode(modeBookmark);
 
   document.onkeydown = function (e) {
     if (!e.ctrlKey || currentMode != modeBookmark) { return; }
