@@ -8,7 +8,7 @@ Performs search by tag, title part or bookmark folder name.
 
 ## Installing
 
-Install from Chrome's extension store or
+Install from Chrome's [extension store](https://chrome.google.com/webstore/detail/bookmark-tags/edpeidcfjfmepdgdjnodefckgdjbigem) or
 clone repository and install as unpacked extension.
 
 ## General info
