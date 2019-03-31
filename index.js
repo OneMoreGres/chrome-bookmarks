@@ -45,7 +45,7 @@ function addTagToFilter(event) {
 
 function editBookmark(event) {
   const li = getNthParent(event.target, 3);
-  if (!(li.id > 0)) return;
+  if (li.id == "") return;
   var edited = window.prompt(chrome.i18n.getMessage("editPrompt"), [li.title]);
   if (edited == null) return;
   chrome.bookmarks.update(li.id, { 'title': edited });
@@ -54,7 +54,7 @@ function editBookmark(event) {
 
 function removeBookmark(event) {
   const li = getNthParent(event.target, 3);
-  if (!(li.id > 0)) return;
+  if (li.id == "") return;
   if (!window.confirm(chrome.i18n.getMessage("removePrompt", [li.title]))) return;
   chrome.bookmarks.remove(li.id);
   currentMode == modeBookmark ? doSearch() : showDuplicates();
