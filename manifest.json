@@ -11,6 +11,13 @@
   "browser_action": {
     "default_icon": "icon.png"
   },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S"
+      }
+    }
+  },
   "background": {
     "scripts": [
       "background.js"
@@ -21,5 +28,5 @@
     "bookmarks",
     "chrome://favicon/"
   ],
-  "version": "0.1.1"
+  "version": "0.1.2"
 }
