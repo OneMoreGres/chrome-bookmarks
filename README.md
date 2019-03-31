@@ -1,4 +1,4 @@
-# Simple chrome bookmark finder
+# Simple chrome (and firefox) bookmark finder
 
 Performs search by tag, title part or bookmark folder name.
 
@@ -10,6 +10,10 @@ Performs search by tag, title part or bookmark folder name.
 
 Install from Chrome's [extension store](https://chrome.google.com/webstore/detail/bookmark-tags/edpeidcfjfmepdgdjnodefckgdjbigem) or
 clone repository and install as unpacked extension.
+
+Similar for Firefox: [extension store](https://addons.mozilla.org/ru/firefox/addon/bookmark-tags/) or
+clone repository, enable debugging (`about:debugging`)
+and install as unpacked extension.
 
 ## General info
 
