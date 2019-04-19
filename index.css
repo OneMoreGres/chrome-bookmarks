@@ -65,6 +65,15 @@
   border-top: 1px solid #e5e5e5;
 }
 
+.hidden {
+  width: 1px;
+  min-height: 30px;
+}
+
+.hidden div {
+  display: none;
+}
+
 #bookmarks ul {
   list-style-type: none;
   list-style-position: inside;

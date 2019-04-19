@@ -110,7 +110,7 @@ function showBookmark(node, pathString, index, fullUrl = false) {
   </span>
   </div>`;
 
-  return `<li class="bookmark" id=${node.id} title="${node.title}">
+  return `<li class="bookmark hidden" id=${node.id} title="${node.title}">
   ${row1}
   ${row2head}${row2mid}${row2tail}
   </li>`;
@@ -238,7 +238,36 @@ function doSearch() {
     document.querySelector('#bookmarks').innerHTML = `<ul>${state.text}</ul>`;
     updateBookmarkHandlers();
     updateServiceLabels(state.index, state.total);
+    window.onscroll = updateBookmarkVisibility;
+    updateBookmarkVisibility();
   });
+}
+
+function updateBookmarkVisibility() {
+  let container = document.querySelector("#bookmarks ul");
+  let children = container.children;
+  const height = window.innerHeight;
+  const offset = 100;
+
+  for (let i = 0; i < children.length; ++i) {
+    let e = children[i];
+    const rect = e.getBoundingClientRect();
+    const isAbove = rect.bottom < -offset;
+    const isBelow = rect.top > height + offset;
+    const isHidden = e.classList.contains("hidden");
+
+    if ((isAbove || isBelow) && !isHidden) {
+      e.style.height = rect.height + "px";
+      e.classList.add("hidden");
+      continue;
+    }
+
+    if (isAbove) continue;
+    if (isBelow) break;
+
+    e.style.height = '';
+    e.classList.remove("hidden");
+  }
 }
 
 function openAll() {
