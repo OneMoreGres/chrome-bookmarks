@@ -86,13 +86,16 @@
   padding: 4px;
 }
 
+.bookmark div {
+  overflow: hidden;
+}
+
 .bookmark .title {
   padding: 4px;
   font-weight: bold;
 }
 
 .bookmark .url {
-  overflow: hidden;
   color: #74736d;
   padding: 0px;
   margin: 0;
@@ -151,7 +154,6 @@
 }
 
 #bookmarks .tag {
-  display: inline-block;
   padding: 2px;
   border-radius: 2px;
   margin: 0 2px 2px 0;
