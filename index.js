@@ -117,20 +117,33 @@ function showBookmark(node, pathString, index, fullUrl = false) {
 }
 
 function getSearch() {
-  var search = { folders: [], words: [] };
+  var search = { folders: [], words: [], tags: [] };
 
   const words = document.querySelector('#search').value.split(' ');
-  const folderRe = /^\/.*$/;
   words.forEach(function (word) {
-    if (word.length == 0
-      || (word.length == 1 && (word == '/' || word == '#')))
+    const minWordLength = 2;
+    if (word.length < minWordLength)
       return;
-    if (folderRe.test(word)) {
-      search.folders.push(word);
+
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    if (escaped[0] == '#') {
+      let pattern = escaped;
+      const isExact = escaped[escaped.length - 1] == '#';
+      if (isExact) pattern = escaped.slice(0, escaped.length - 1) + '\\b';
+      search.tags.push(new RegExp(pattern, 'i'));
+      return;
     }
-    else {
-      search.words.push(word);
+
+    if (escaped[0] == '/') {
+      let pattern = escaped;
+      const isExact = escaped[escaped.length - 1] == '/';
+      if (isExact) pattern = escaped.slice(0, escaped.length - 1) + '\\b';
+      search.folders.push(new RegExp(pattern, 'i'));
+      return;
     }
+
+    search.words.push(new RegExp(escaped, 'i'));
   });
 
   return search;
@@ -164,30 +177,25 @@ function filterBookmarks(node, path, search, state) {
   }
 
   ++state.total;
+
   if (search.words.length > 0) {
     const ok = search.words.reduce(function (prev, word) {
-      if (!prev) return false;
-      const isTag = (word[0] == '#');
-      if (isTag) {
-        if (word[word.length - 1] == '#') {
-          word = word.slice(0, word.length - 1) + ' ';
-          return (node.title + ' ').indexOf(word) != -1;
-        }
-        else {
-          return node.title.indexOf(word) != -1;
-        }
-      }
-      else {
-        return (node.title.indexOf(word) != -1
-          || node.url.indexOf(word) != -1);
-      }
+      return prev && (node.title.search(word) != -1
+        || node.url.search(word) != -1);
+    }, true);
+    if (!ok) return;
+  }
+
+  if (search.tags.length > 0) {
+    const ok = search.tags.reduce(function (prev, tag) {
+      return prev && node.title.search(tag) != -1;
     }, true);
     if (!ok) return;
   }
 
   if (search.folders.length > 0) {
     const ok = search.folders.reduce(function (prev, folder) {
-      return prev && path.indexOf(folder) != -1;
+      return prev && path.search(folder) != -1;
     }, true);
     if (!ok) return;
   }
@@ -210,11 +218,9 @@ function doSearch() {
 
   const search = getSearch();
 
-  const noFolders = search.folders.length == 0;
-  const minWordLength = 2;
-  const noWords = search.words.length == 0 ||
-    (search.words.length == 1 && search.words[0].length < minWordLength);
-  if (noFolders && noWords) {
+  if (search.folders.length == 0
+    && search.words.length == 0
+    && search.tags.length == 0) {
     document.querySelector('#bookmarks').innerHTML = '';
     updateServiceLabels(0, 0);
     return;
