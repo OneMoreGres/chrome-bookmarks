@@ -475,6 +475,7 @@ function init() {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
     if (tabs.length == 0) return;
     currentId = tabs[0].id;
+    document.querySelector('#search').focus();
   });
   chrome.tabs.onActivated.addListener(function (tab) {
     if (currentId != tab.tabId) return;
