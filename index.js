@@ -119,8 +119,13 @@ function showBookmark(node, pathString, index, fullUrl = false) {
 function getSearch() {
   var search = { folders: [], words: [], tags: [] };
 
-  const words = document.querySelector('#search').value.split(' ');
-  words.forEach(function (word) {
+  const searchString = document.querySelector('#search').value;
+  if (searchString == '*') {
+    search.words.push(new RegExp(".*"));
+    return search;
+  }
+
+  searchString.split(' ').forEach(function (word) {
     const minWordLength = 2;
     if (word.length < minWordLength)
       return;
