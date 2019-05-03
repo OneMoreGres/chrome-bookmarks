@@ -28,7 +28,7 @@ function cleanName(title) {
 }
 
 function getTags(title) {
-  const matches = title.toLowerCase().match(/#([\d-\w]+)/g);
+  const matches = title.toLowerCase().match(/#(\S+)/g);
   const result = matches ? matches : [];
   return result;
 }
