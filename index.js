@@ -290,13 +290,19 @@ function openNthLink(index) {
   chrome.tabs.create({ 'url': items[index].href });
 }
 
-function editionTag() {
-  var tag = window.prompt(chrome.i18n.getMessage("newTagPrompt"), lastTag);
-  if (tag == null) return '';
-  if (tag[0] != '#') tag = '#' + tag;
-  if (tag.length == 1) return '';
-  lastTag = tag;
-  return tag;
+function editionTags() {
+  const input = window.prompt(chrome.i18n.getMessage("newTagPrompt"), lastTag);
+  if (input == null) return [];
+  lastTag = input;
+
+  const parts = input.split(/\s/);
+  const tags = parts.reduce(function(sum, value){
+    if (value.length == 0) return sum;
+    if (value[0] != '#') value = '#' + value;
+    if (sum.indexOf(value) != -1) return sum;
+    return sum.concat([value]);
+  }, []);
+  return tags;
 }
 
 function tagRegExp(tag) {
@@ -305,39 +311,48 @@ function tagRegExp(tag) {
 
 function addTagToAll() {
   if (currentMode != modeBookmark) return;
-  const tag = editionTag();
-  if (tag.length == 0) return;
-  var re = tagRegExp(tag);
+  const tags = editionTags();
+  if (tags.length == 0) return;
 
   var items = document.querySelectorAll('.bookmark');
-  for (var i = 0; i < items.length; ++i) {
-    var item = items[i];
-    var id = item.getAttribute('id');
-    var title = item.getAttribute('title');
-    if (!id || !title || title.search(re) != -1) continue;
-    chrome.bookmarks.update(id, { 'title': title + ' ' + tag });
-  };
+  tags.forEach(tag => {
+    var re = tagRegExp(tag);
+
+    for (var i = 0; i < items.length; ++i) {
+      var item = items[i];
+      var id = item.getAttribute('id');
+      var title = item.getAttribute('title');
+      if (!id || !title || title.search(re) != -1) continue;
+      title = title + ' ' + tag;
+      item.setAttribute('title', title);
+      chrome.bookmarks.update(id, { 'title': title });
+    };
+  });
   doSearch();
 }
 
 function removeTagFromAll() {
   if (currentMode != modeBookmark) return;
-  const tag = editionTag();
-  if (tag.length == 0) return;
-  const re = tagRegExp(tag);
+  const tags = editionTags();
+  if (tags.length == 0) return;
 
   const items = document.querySelectorAll('.bookmark');
-  for (var i = 0; i < items.length; ++i) {
-    const item = items[i];
-    const id = item.getAttribute('id');
-    var title = item.getAttribute('title');
-    if (!id || !title) continue;
+  tags.forEach(tag => {
+    const re = tagRegExp(tag);
 
-    const index = title.search(re);
-    if (index == -1) continue;
-    title = title.replace(re, ' ');
-    chrome.bookmarks.update(id, { 'title': title });
-  };
+    for (var i = 0; i < items.length; ++i) {
+      const item = items[i];
+      const id = item.getAttribute('id');
+      var title = item.getAttribute('title');
+      if (!id || !title) continue;
+
+      const index = title.search(re);
+      if (index == -1) continue;
+      title = title.replace(re, ' ');
+      item.setAttribute('title', title);
+      chrome.bookmarks.update(id, { 'title': title });
+    };
+  });
   doSearch();
 }
 
