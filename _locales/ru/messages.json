@@ -55,7 +55,7 @@
     "message": "Удалить закладку $1?"
   },
   "inputHint": {
-    "message": "Поиск по заголовкам и url ('/name' - папка, '#name' - тег, '*' - все)"
+    "message": "Поиск по заголовкам и url ('/name' - папка, '#name' - тег, '*' - все, '!name' - не <name>)"
   },
   "showAllTags": {
     "message": "Показать все теги"

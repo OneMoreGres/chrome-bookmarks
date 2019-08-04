@@ -121,14 +121,26 @@ function getSearch() {
 
   const searchString = document.querySelector('#search').value;
   if (searchString == '*') {
-    search.words.push(new RegExp(".*"));
+    search.words.push({ "re": new RegExp(".*"), "shouldMatch": true });
     return search;
   }
 
   searchString.split(' ').forEach(function (word) {
     const minWordLength = 2;
     if (word.length < minWordLength)
-      return;
+      return {};
+
+    let shouldMatch = true;
+    if (word[0] == '!') {
+      shouldMatch = false;
+      word = word.slice(1);
+    }
+    else if (word.startsWith('\\!')) {
+      word = '!' + word.slice(2)
+    }
+
+    if (word.length < minWordLength)
+      return {};
 
     const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -136,7 +148,7 @@ function getSearch() {
       let pattern = escaped;
       const isExact = escaped[escaped.length - 1] == '#';
       if (isExact) pattern = escaped.slice(0, escaped.length - 1) + '\\b';
-      search.tags.push(new RegExp(pattern, 'i'));
+      search.tags.push({ "re": new RegExp(pattern, 'i'), "shouldMatch": shouldMatch });
       return;
     }
 
@@ -144,32 +156,14 @@ function getSearch() {
       let pattern = escaped;
       const isExact = escaped[escaped.length - 1] == '/';
       if (isExact) pattern = escaped.slice(0, escaped.length - 1) + '\\b';
-      search.folders.push(new RegExp(pattern, 'i'));
+      search.folders.push({ "re": new RegExp(pattern, 'i'), "shouldMatch": shouldMatch });
       return;
     }
 
-    search.words.push(new RegExp(escaped, 'i'));
+    search.words.push({ "re": new RegExp(escaped, 'i'), "shouldMatch": shouldMatch });
   });
 
   return search;
-}
-
-function updateServiceLabels(matched, total) {
-  document.querySelector("#foundCount").innerHTML = matched + '/' + total;
-  var noResults = document.querySelector('#no-results');
-  if (matched > 0) {
-    noResults.style.display = 'none';
-  }
-  else {
-    noResults.style.display = 'block';
-  }
-}
-
-function updateBookmarkHandlers() {
-  document.querySelectorAll(".bookmark .path").forEach(e => e.onclick = addFolderToFilter);
-  document.querySelectorAll(".bookmark .tag").forEach(e => e.onclick = addTagToFilter);
-  document.querySelectorAll(".bookmark .edit").forEach(e => e.onclick = editBookmark);
-  document.querySelectorAll(".bookmark .remove").forEach(e => e.onclick = removeBookmark);
 }
 
 function filterBookmarks(node, path, search, state) {
@@ -185,22 +179,22 @@ function filterBookmarks(node, path, search, state) {
 
   if (search.words.length > 0) {
     const ok = search.words.reduce(function (prev, word) {
-      return prev && (node.title.search(word) != -1
-        || node.url.search(word) != -1);
+      return prev && (word.shouldMatch == (node.title.search(word.re) != -1
+        || node.url.search(word.re) != -1));
     }, true);
     if (!ok) return;
   }
 
   if (search.tags.length > 0) {
     const ok = search.tags.reduce(function (prev, tag) {
-      return prev && node.title.search(tag) != -1;
+      return prev && (tag.shouldMatch == (node.title.search(tag.re) != -1));
     }, true);
     if (!ok) return;
   }
 
   if (search.folders.length > 0) {
     const ok = search.folders.reduce(function (prev, folder) {
-      return prev && path.search(folder) != -1;
+      return prev && (folder.shouldMatch == (path.search(folder.re) != -1));
     }, true);
     if (!ok) return;
   }
@@ -241,6 +235,24 @@ function doSearch() {
     window.onscroll = updateBookmarkVisibility;
     updateBookmarkVisibility();
   });
+}
+
+function updateServiceLabels(matched, total) {
+  document.querySelector("#foundCount").innerHTML = matched + '/' + total;
+  var noResults = document.querySelector('#no-results');
+  if (matched > 0) {
+    noResults.style.display = 'none';
+  }
+  else {
+    noResults.style.display = 'block';
+  }
+}
+
+function updateBookmarkHandlers() {
+  document.querySelectorAll(".bookmark .path").forEach(e => e.onclick = addFolderToFilter);
+  document.querySelectorAll(".bookmark .tag").forEach(e => e.onclick = addTagToFilter);
+  document.querySelectorAll(".bookmark .edit").forEach(e => e.onclick = editBookmark);
+  document.querySelectorAll(".bookmark .remove").forEach(e => e.onclick = removeBookmark);
 }
 
 function updateBookmarkVisibility() {
@@ -296,7 +308,7 @@ function editionTags() {
   lastTag = input;
 
   const parts = input.split(/\s/);
-  const tags = parts.reduce(function(sum, value){
+  const tags = parts.reduce(function (sum, value) {
     if (value.length == 0) return sum;
     if (value[0] != '#') value = '#' + value;
     if (sum.indexOf(value) != -1) return sum;

@@ -37,7 +37,7 @@
     "message": "Enter tag (or multiple space separated)"
   },
   "editPrompt": {
-    "message": "Bookark title with tags"
+    "message": "Bookmark title with tags"
   },
   "targetFolderPrompt": {
     "message": "Target folder"
@@ -55,7 +55,7 @@
     "message": "Remove bookmark $1?"
   },
   "inputHint": {
-    "message": "Search in title and url ('/name' - folder, '#name' - tag, '*' - all)"
+    "message": "Search in title and url ('/name' - folder, '#name' - tag, '*' - all, '!name' - not <name>)"
   },
   "showAllTags": {
     "message": "Show all tags"
