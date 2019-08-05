@@ -110,7 +110,8 @@ function showBookmark(node, pathString, index, fullUrl = false) {
   </span>
   </div>`;
 
-  return `<li class="bookmark hidden" id=${node.id} title="${node.title}">
+  const nodeTitle = node.title.replace(/"/g, '&quot;');
+  return `<li class="bookmark hidden" id=${node.id} title="${nodeTitle}">
   ${row1}
   ${row2head}${row2mid}${row2tail}
   </li>`;
