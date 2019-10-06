@@ -59,12 +59,6 @@
   color: black;
 }
 
-#bookmarks {
-  margin-top: 30px;
-  width: 100%;
-  border-top: 1px solid #e5e5e5;
-}
-
 .hidden {
   width: 1px;
   min-height: 30px;
@@ -74,10 +68,23 @@
   display: none;
 }
 
+#bookmarks {
+  margin-top: 30px;
+  width: 100%;
+  border-top: 1px solid #e5e5e5;
+}
+
 #bookmarks ul {
   list-style-type: none;
   list-style-position: inside;
   padding: 0px;
+  margin: 10px 0;
+}
+
+#bookmarks.tagsOnly ul {
+  height: calc(100vh - 70px);
+  column-width: 150px;
+  box-sizing: border-box;
 }
 
 #bookmarks li {
@@ -170,13 +177,6 @@
   font-size: 10px;
   background: #4185fa;
   cursor: pointer;
-}
-
-#bookmarks li.tagOnly {
-  display: block;
-  width: 20%;
-  float: left;
-  background: #fffefa;
 }
 
 

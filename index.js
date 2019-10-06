@@ -230,7 +230,9 @@ function doSearch() {
     setMode(modeBookmark);
     let state = { 'text': '', 'index': 0, 'total': 0 };
     tree.forEach(node => filterBookmarks(node, "", search, state));
-    document.querySelector('#bookmarks').innerHTML = `<ul>${state.text}</ul>`;
+    let bookmarksDiv = document.querySelector("#bookmarks");
+    bookmarksDiv.classList.toggle('tagsOnly', false);
+    bookmarksDiv.innerHTML = `<ul>${state.text}</ul>`;
     updateBookmarkHandlers();
     updateServiceLabels(state.index, state.total);
     window.onscroll = updateBookmarkVisibility;
@@ -475,9 +477,11 @@ function showAllTags() {
     tree.forEach(node => parseTags(node, tags));
     const tagNames = Object.keys(tags).sort();
     const tagsHtml = tagNames.reduce((sum, name) =>
-      sum + `<li class="tagOnly"><span class="tag">${name}</span><span>${tags[name]}</span></li>`,
+      sum + `<li><span class="tag">${name}</span><span>${tags[name]}</span></li>`,
       "");
-    document.querySelector("#bookmarks").innerHTML = `<ul>${tagsHtml}</ul>`;
+    let bookmarksDiv = document.querySelector("#bookmarks");
+    bookmarksDiv.classList.toggle('tagsOnly', true);
+    bookmarksDiv.innerHTML = `<ul>${tagsHtml}</ul>`;
     document.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
     updateServiceLabels(tagNames.length, tagNames.length);
   });
