@@ -10,7 +10,91 @@ var delaySearch = true;
 const modeBookmark = 1;
 const modeTags = 2;
 const modeDuplicates = 3;
+var currentComparer = null;
+var comparerForMode = {};
 var currentMode = modeBookmark;
+
+
+function titleComparer(left, right) {
+  return left.title < right.title;
+}
+
+function titleComparerInv(left, right) {
+  return titleComparer(right, left);
+}
+
+function dateAddedComparer(left, right) {
+  return left.node.dateAdded < right.node.dateAdded
+    || (left.node.dateAdded == right.node.dateAdded && left.title < right.title);
+}
+
+function dateAddedComparerInv(left, right) {
+  return dateAddedComparer(right, left);
+}
+
+function countComparer(left, right) {
+  return left.count < right.count
+    || (left.count == right.count && left.title < right.title);
+}
+
+function countComparerInv(left, right) {
+  return countComparer(right, left);
+}
+
+function setTitleComparer() {
+  currentComparer = currentComparer == titleComparerInv ? titleComparer : titleComparerInv;
+  refreshSorting();
+  refresh();
+}
+
+function setDateComparer() {
+  currentComparer = currentComparer == dateAddedComparer ? dateAddedComparerInv : dateAddedComparer;
+  refreshSorting();
+  refresh();
+}
+
+function setCountComparer() {
+  currentComparer = currentComparer == countComparer ? countComparerInv : countComparer;
+  refreshSorting();
+  refresh();
+}
+
+function insertSorted(items, item) {
+  var left = 0;
+  var right = items.length;
+
+  while (left < right) {
+    const mid = (left + right) >>> 1;
+    if (currentComparer(item, items[mid]))
+      left = mid + 1;
+    else
+      right = mid;
+  }
+
+  items.splice(left, 0, item);
+}
+
+function refreshSorting() {
+  const updateTitle = function (selector, text, up, down) {
+    let div = document.querySelector(selector);
+    div.text = chrome.i18n.getMessage(text);
+    if (!(currentComparer == up || currentComparer == down)) {
+      return;
+    }
+    div.text += String.fromCharCode(currentComparer == up ? 8593 : 8595);
+  };
+  updateTitle("#sortByName", "sortByName", titleComparer, titleComparerInv);
+  updateTitle("#sortByDate", "sortByDate", dateAddedComparer, dateAddedComparerInv);
+  updateTitle("#sortByCount", "sortByCount", countComparer, countComparerInv);
+  comparerForMode[currentMode] = currentComparer;
+}
+
+function refresh() {
+  if (currentMode == modeBookmark) doSearch();
+  else if (currentMode == modeTags) showAllTags();
+  else showDuplicates();
+}
+
 
 function setBookmarksHtml(text) {
   document.querySelector("#bookmarks").innerHTML = text;
@@ -70,8 +154,12 @@ function removeBookmark(event) {
   currentMode == modeBookmark ? doSearch() : showDuplicates();
 }
 
+function canHandleBookmark(node) {
+  return node.url && node.url.substring(0, 11) != "javascript:";
+}
+
 function showBookmark(node, pathString, index, fullUrl = false) {
-  if (!node.url || node.url.substring(0, 11) == "javascript:") {
+  if (!canHandleBookmark(node)) {
     return "";
   }
 
@@ -210,11 +298,10 @@ function filterBookmarks(node, path, search, state) {
     if (!ok) return;
   }
 
-  const added = showBookmark(node, path, state.index);
-  if (added.length > 0) {
-    state.text += added;
-    ++state.index;
-  }
+  if (!canHandleBookmark(node)) return;
+
+  const item = { 'node': node, 'title': node.title, 'path': path }
+  insertSorted(state.items, item);
 }
 
 function doSearch() {
@@ -238,11 +325,13 @@ function doSearch() {
 
   chrome.bookmarks.getTree(function (tree) {
     setMode(modeBookmark);
-    let state = { 'text': '', 'index': 0, 'total': 0 };
+    let state = {'items': [], 'total': 0};
     tree.forEach(node => filterBookmarks(node, "", search, state));
-    setBookmarksHtml(`<ul>${state.text}</ul>`);
+    const text = state.items.reduce((sum, node, index) =>
+      sum + showBookmark(node.node, node.path, index), "");
+    setBookmarksHtml(`<ul>${text}</ul>`);
     updateBookmarkHandlers();
-    updateServiceLabels(state.index, state.total);
+    updateServiceLabels(state.items.length, state.total);
     updateBookmarkVisibility();
   });
 }
@@ -483,13 +572,17 @@ function showAllTags() {
     setMode(modeTags);
     let tags = {};
     tree.forEach(node => parseTags(node, tags));
-    const tagNames = Object.keys(tags).sort();
-    const tagsHtml = tagNames.reduce((sum, name) =>
-      sum + `<li><span class="tag">${name}</span><span>${tags[name]}</span></li>`,
+    let ordered = [];
+    for (name in tags) {
+      const item = {'title' : name, 'count': tags[name]};
+      insertSorted(ordered, item);
+    }
+    const tagsHtml = ordered.reduce((sum, tag) =>
+      sum + `<li><span class="tag">${tag.title}</span><span>${tag.count}</span></li>`,
       "");
     setTagsHtml(`<ul>${tagsHtml}</ul>`);
     document.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
-    updateServiceLabels(tagNames.length, tagNames.length);
+    updateServiceLabels(ordered.length, ordered.length);
   });
 }
 
@@ -538,6 +631,18 @@ function setMode(mode) {
     currentMode == modeTags ? "hidden" : "visible";
   document.querySelector("#tags").style.visibility =
     currentMode == modeTags ? "visible" : "hidden";
+
+  const canSort = currentMode != modeDuplicates;
+  document.querySelector("#sortByName").classList.toggle("disabled",
+    !(canSort));
+  document.querySelector("#sortByDate").classList.toggle("disabled",
+    !(canSort && currentMode == modeBookmark));
+  document.querySelector("#sortByCount").classList.toggle("disabled",
+    !(canSort && currentMode == modeTags));
+
+  currentComparer = comparerForMode[currentMode];
+  if (currentComparer == null) currentComparer = titleComparerInv;
+  refreshSorting();
 }
 
 function init() {
@@ -562,6 +667,9 @@ function init() {
   document.querySelector('#move-to-folder').onclick = moveToFolder;
   document.querySelector('#show-all-tags').onclick = showAllTags;
   document.querySelector('#show-duplicates').onclick = showDuplicates;
+  document.querySelector('#sortByName').onclick = setTitleComparer;
+  document.querySelector('#sortByDate').onclick = setDateComparer;
+  document.querySelector('#sortByCount').onclick = setCountComparer;
 
   window.onscroll = updateBookmarkVisibility;
 

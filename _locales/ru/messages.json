@@ -62,5 +62,17 @@
   },
   "showDuplicates": {
     "message": "Показать возможные дубликаты"
+  },
+  "sortBy": {
+    "message": "Сортировка:"
+  },
+  "sortByName": {
+    "message": "по имени"
+  },
+  "sortByDate": {
+    "message": "по дате добавления"
+  },
+  "sortByCount": {
+    "message": "по количеству закладок"
   }
 }

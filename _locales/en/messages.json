@@ -62,5 +62,17 @@
   },
   "showDuplicates": {
     "message": "Show possible duplicates"
+  },
+  "sortBy": {
+    "message": "Sorting:"
+  },
+  "sortByName": {
+    "message": "by name"
+  },
+  "sortByDate": {
+    "message": "Sort by date added"
+  },
+  "sortByCount": {
+    "message": "Sort by bookmark count"
   }
 }

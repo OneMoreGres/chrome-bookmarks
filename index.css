@@ -74,9 +74,22 @@
   border-top: 1px solid #e5e5e5;
 }
 
+#sorting,
 #tags,
 #bookmarks {
   width: 100%;
+}
+
+#sorting a {
+  font-size: smaller;
+  color: rgb(22, 179, 179);
+  padding: 0px 16px;
+  text-decoration: none;
+}
+
+#sorting a.disabled {
+  color: grey;
+  cursor: default;
 }
 
 #tags ul {
