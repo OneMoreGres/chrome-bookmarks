@@ -12,6 +12,16 @@ const modeTags = 2;
 const modeDuplicates = 3;
 var currentMode = modeBookmark;
 
+function setBookmarksHtml(text) {
+  document.querySelector("#bookmarks").innerHTML = text;
+  document.querySelector("#tags").innerHTML = "";
+}
+function setTagsHtml(text) {
+  document.querySelector("#tags").innerHTML = text;
+  document.querySelector("#bookmarks").innerHTML = "";
+}
+
+
 function getNthParent(element, i) {
   while (i > 0) {
     element = element.parentElement;
@@ -230,9 +240,7 @@ function doSearch() {
     setMode(modeBookmark);
     let state = { 'text': '', 'index': 0, 'total': 0 };
     tree.forEach(node => filterBookmarks(node, "", search, state));
-    let bookmarksDiv = document.querySelector("#bookmarks");
-    bookmarksDiv.classList.toggle('tagsOnly', false);
-    bookmarksDiv.innerHTML = `<ul>${state.text}</ul>`;
+    setBookmarksHtml(`<ul>${state.text}</ul>`);
     updateBookmarkHandlers();
     updateServiceLabels(state.index, state.total);
     updateBookmarkVisibility();
@@ -479,9 +487,7 @@ function showAllTags() {
     const tagsHtml = tagNames.reduce((sum, name) =>
       sum + `<li><span class="tag">${name}</span><span>${tags[name]}</span></li>`,
       "");
-    let bookmarksDiv = document.querySelector("#bookmarks");
-    bookmarksDiv.classList.toggle('tagsOnly', true);
-    bookmarksDiv.innerHTML = `<ul>${tagsHtml}</ul>`;
+    setTagsHtml(`<ul>${tagsHtml}</ul>`);
     document.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
     updateServiceLabels(tagNames.length, tagNames.length);
   });
@@ -516,7 +522,7 @@ function showDuplicates() {
       return sum + nodes.reduce((sum, node) =>
         sum + showBookmark(node, node.path, 999, true), "");
     }, "");
-    document.querySelector("#bookmarks").innerHTML = `<ul>${html}</ul>`;
+    setBookmarksHtml(`<ul>${html}</ul>`);
     updateBookmarkHandlers(showDuplicates);
     updateServiceLabels(count, 0);
     updateBookmarkVisibility();
@@ -526,8 +532,12 @@ function showDuplicates() {
 function setMode(mode) {
   currentMode = mode;
   let controls = document.querySelectorAll("#open-all, #add-tag, #remove-tag, #add-folder-tags, #move-to-folder");
-  controls.forEach(node => currentMode == modeBookmark
-    ? node.classList.remove("disabled") : node.classList.add("disabled"));
+  controls.forEach(node => node.classList.toggle("disabled", currentMode != modeBookmark));
+
+  document.querySelector("#bookmarks").style.visibility =
+    currentMode == modeTags ? "hidden" : "visible";
+  document.querySelector("#tags").style.visibility =
+    currentMode == modeTags ? "visible" : "hidden";
 }
 
 function init() {

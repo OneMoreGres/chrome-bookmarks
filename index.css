@@ -68,10 +68,25 @@
   display: none;
 }
 
-#bookmarks {
+#content {
   margin-top: 30px;
   width: 100%;
   border-top: 1px solid #e5e5e5;
+}
+
+#tags,
+#bookmarks {
+  width: 100%;
+}
+
+#tags ul {
+  list-style-type: none;
+  list-style-position: inside;
+  height: calc(100vh - 80px);
+  column-width: 150px;
+  box-sizing: border-box;
+  padding: 0px;
+  margin: 10px 0;
 }
 
 #bookmarks ul {
@@ -79,12 +94,6 @@
   list-style-position: inside;
   padding: 0px;
   margin: 10px 0;
-}
-
-#bookmarks.tagsOnly ul {
-  height: calc(100vh - 70px);
-  column-width: 150px;
-  box-sizing: border-box;
 }
 
 #bookmarks li {
@@ -169,7 +178,8 @@
   background: #aeaeae;
 }
 
-#bookmarks .tag {
+#bookmarks .tag,
+#tags .tag {
   padding: 2px;
   border-radius: 2px;
   margin: 0 2px 2px 0;
