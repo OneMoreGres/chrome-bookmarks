@@ -9,7 +9,7 @@ const searchDelay = 200; //ms
 var delaySearch = true;
 const modeBookmark = 1;
 const modeTags = 2;
-const modeDublicates = 3;
+const modeDuplicates = 3;
 var currentMode = modeBookmark;
 
 function getNthParent(element, i) {
@@ -504,7 +504,7 @@ function findDuplicates(node, path, state) {
 
 function showDuplicates() {
   chrome.bookmarks.getTree(function (tree) {
-    setMode(modeDublicates);
+    setMode(modeDuplicates);
     let state = {};
     tree.forEach(node => findDuplicates(node, "", state));
     const names = Object.keys(state).sort();
