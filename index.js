@@ -235,7 +235,6 @@ function doSearch() {
     bookmarksDiv.innerHTML = `<ul>${state.text}</ul>`;
     updateBookmarkHandlers();
     updateServiceLabels(state.index, state.total);
-    window.onscroll = updateBookmarkVisibility;
     updateBookmarkVisibility();
   });
 }
@@ -260,6 +259,7 @@ function updateBookmarkHandlers() {
 
 function updateBookmarkVisibility() {
   let container = document.querySelector("#bookmarks ul");
+  if (container == null) return;
   let children = container.children;
   const height = window.innerHeight;
   const offset = 100;
@@ -519,6 +519,7 @@ function showDuplicates() {
     document.querySelector("#bookmarks").innerHTML = `<ul>${html}</ul>`;
     updateBookmarkHandlers(showDuplicates);
     updateServiceLabels(count, 0);
+    updateBookmarkVisibility();
   });
 }
 
@@ -551,6 +552,8 @@ function init() {
   document.querySelector('#move-to-folder').onclick = moveToFolder;
   document.querySelector('#show-all-tags').onclick = showAllTags;
   document.querySelector('#show-duplicates').onclick = showDuplicates;
+
+  window.onscroll = updateBookmarkVisibility;
 
   setMode(modeBookmark);
 
