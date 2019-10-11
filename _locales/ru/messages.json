@@ -60,6 +60,9 @@
   "showAllTags": {
     "message": "Показать все теги"
   },
+  "showSearchTags": {
+    "message": "Показать теги текущего поиска"
+  },
   "showDuplicates": {
     "message": "Показать возможные дубликаты"
   },

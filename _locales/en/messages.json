@@ -60,6 +60,9 @@
   "showAllTags": {
     "message": "Show all tags"
   },
+  "showSearchTags": {
+    "message": "Show tags in search"
+  },
   "showDuplicates": {
     "message": "Show possible duplicates"
   },

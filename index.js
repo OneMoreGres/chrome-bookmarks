@@ -7,9 +7,12 @@ var urlParser = document.createElement('a');
 var searchTimeout = null;
 const searchDelay = 200; //ms
 var delaySearch = true;
+
 const modeBookmark = 1;
 const modeTags = 2;
-const modeDuplicates = 3;
+const modeSearchTags = 3;
+const modeDuplicates = 4;
+
 var currentComparer = null;
 var comparerForMode = {};
 var currentMode = modeBookmark;
@@ -92,6 +95,7 @@ function refreshSorting() {
 function refresh() {
   if (currentMode == modeBookmark) doSearch();
   else if (currentMode == modeTags) showAllTags();
+  else if (currentMode == modeSearchTags) showSearchTags();
   else showDuplicates();
 }
 
@@ -570,22 +574,45 @@ function parseTags(node, tags) {
   }
 }
 
+function visualizeTags(tags) {
+  let ordered = [];
+  for (name in tags) {
+    const item = {'title' : name, 'count': tags[name]};
+    insertSorted(ordered, item);
+  }
+  const tagsHtml = ordered.reduce((sum, tag) =>
+    sum + `<li><span class="tag">${tag.title}</span><span>${tag.count}</span></li>`,
+    "");
+  setTagsHtml(`<ul>${tagsHtml}</ul>`);
+  document.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
+  updateServiceLabels(ordered.length, ordered.length);
+}
+
 function showAllTags() {
   chrome.bookmarks.getTree(function (tree) {
     setMode(modeTags);
     let tags = {};
     tree.forEach(node => parseTags(node, tags));
-    let ordered = [];
-    for (name in tags) {
-      const item = {'title' : name, 'count': tags[name]};
-      insertSorted(ordered, item);
-    }
-    const tagsHtml = ordered.reduce((sum, tag) =>
-      sum + `<li><span class="tag">${tag.title}</span><span>${tag.count}</span></li>`,
-      "");
-    setTagsHtml(`<ul>${tagsHtml}</ul>`);
-    document.querySelectorAll(".tag").forEach(tag => tag.onclick = addTagToFilter);
-    updateServiceLabels(ordered.length, ordered.length);
+    visualizeTags(tags);
+  });
+}
+
+function showSearchTags() {
+  const search = getSearch();
+
+  if (search.folders.length == 0
+    && search.words.length == 0
+    && search.tags.length == 0) {
+    return;
+  }
+
+  chrome.bookmarks.getTree(function (tree) {
+    setMode(modeSearchTags);
+    let state = {'items': [], 'total': 0};
+    tree.forEach(node => filterBookmarks(node, "", search, state));
+    let tags = {};
+    state.items.forEach(item => parseTags(item.node, tags));
+    visualizeTags(tags);
   });
 }
 
@@ -627,13 +654,13 @@ function showDuplicates() {
 
 function setMode(mode) {
   currentMode = mode;
-  let controls = document.querySelectorAll("#open-all, #add-tag, #remove-tag, #add-folder-tags, #move-to-folder");
+  let controls = document.querySelectorAll("#open-all, #add-tag, #remove-tag, \
+  #add-folder-tags, #move-to-folder, #show-search-tags");
   controls.forEach(node => node.classList.toggle("disabled", currentMode != modeBookmark));
 
-  document.querySelector("#bookmarks").style.visibility =
-    currentMode == modeTags ? "hidden" : "visible";
-  document.querySelector("#tags").style.visibility =
-    currentMode == modeTags ? "visible" : "hidden";
+  const showingTags = currentMode == modeTags || currentMode == modeSearchTags;
+  document.querySelector("#bookmarks").style.visibility = showingTags ? "hidden" : "visible";
+  document.querySelector("#tags").style.visibility = showingTags ? "visible" : "hidden";
 
   const canSort = currentMode != modeDuplicates;
   document.querySelector("#sortByName").classList.toggle("disabled",
@@ -641,7 +668,7 @@ function setMode(mode) {
   document.querySelector("#sortByDate").classList.toggle("disabled",
     !(canSort && currentMode == modeBookmark));
   document.querySelector("#sortByCount").classList.toggle("disabled",
-    !(canSort && currentMode == modeTags));
+    !(canSort && showingTags));
 
   currentComparer = comparerForMode[currentMode];
   if (currentComparer == null) currentComparer = titleComparerInv;
@@ -669,6 +696,7 @@ function init() {
   document.querySelector('#add-folder-tags').onclick = addFolderTags;
   document.querySelector('#move-to-folder').onclick = moveToFolder;
   document.querySelector('#show-all-tags').onclick = showAllTags;
+  document.querySelector('#show-search-tags').onclick = showSearchTags;
   document.querySelector('#show-duplicates').onclick = showDuplicates;
   document.querySelector('#sortByName').onclick = setTitleComparer;
   document.querySelector('#sortByDate').onclick = setDateComparer;
