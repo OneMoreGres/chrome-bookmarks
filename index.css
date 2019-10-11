@@ -45,20 +45,6 @@
   border: none;
 }
 
-.toolbar a {
-  float: left;
-  display: block;
-  color: black;
-  text-align: center;
-  padding: 6px;
-  text-decoration: none;
-}
-
-.toolbar a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
 .hidden {
   width: 1px;
   min-height: 30px;
@@ -237,8 +223,9 @@
 
 .dropdown-content a {
   color: black;
-  padding: 6px 16px;
+  padding: 4px 16px;
   text-decoration: none;
+  text-align: center;
   display: block;
 }
 
