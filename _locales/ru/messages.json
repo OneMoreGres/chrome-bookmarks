@@ -60,6 +60,9 @@
   "showAllTags": {
     "message": "Показать все теги"
   },
+  "removeDuplicates": {
+    "message": "Удалить полные дубликаты"
+  },
   "showSearchTags": {
     "message": "Показать теги текущего поиска"
   },

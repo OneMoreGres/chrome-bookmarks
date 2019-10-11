@@ -652,6 +652,47 @@ function showDuplicates() {
   });
 }
 
+function findExactDuplicates(node, path, duplicates) {
+  if (!node.children) return;
+
+  let existing = {};
+  const newPath = path + '/' + node.title;
+  node.children.forEach(function (child) {
+    if (child.children) {
+      findExactDuplicates(child, newPath, duplicates);
+      return;
+    }
+    if (!child.url) return;
+    if (!existing.hasOwnProperty(child.title)) {
+      existing[child.title] = {};
+      existing[child.title][child.url] = true;
+      return;
+    }
+    if (existing[child.title][child.url] !== undefined) {
+      const item = { 'node': child, 'title': child.title, 'path': newPath };
+      insertSorted(duplicates, item);
+      return;
+    }
+  });
+}
+
+function removeDuplicates() {
+  chrome.bookmarks.getTree(function (tree) {
+    setMode(modeDuplicates);
+    currentComparer = currentComparer == titleComparerInv ? titleComparer : titleComparerInv;
+    let duplicates = [];
+    tree.forEach(node => findExactDuplicates(node, '', duplicates));
+    const html = duplicates.reduce(function (sum, node) {
+      chrome.bookmarks.remove(node.node.id);
+      return sum + showBookmark(node.node, node.path, 999, true);
+    }, "");
+    setBookmarksHtml(`<ul>${html}</ul>`);
+    updateBookmarkHandlers(showDuplicates);
+    updateServiceLabels(duplicates.length, 0);
+    updateBookmarkVisibility();
+  });
+}
+
 function setMode(mode) {
   currentMode = mode;
   let controls = document.querySelectorAll("#open-all, #add-tag, #remove-tag, \
@@ -698,6 +739,7 @@ function init() {
   document.querySelector('#show-all-tags').onclick = showAllTags;
   document.querySelector('#show-search-tags').onclick = showSearchTags;
   document.querySelector('#show-duplicates').onclick = showDuplicates;
+  document.querySelector('#remove-duplicates').onclick = removeDuplicates;
   document.querySelector('#sortByName').onclick = setTitleComparer;
   document.querySelector('#sortByDate').onclick = setDateComparer;
   document.querySelector('#sortByCount').onclick = setCountComparer;

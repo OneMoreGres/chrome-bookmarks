@@ -66,6 +66,9 @@
   "showDuplicates": {
     "message": "Show possible duplicates"
   },
+  "removeDuplicates": {
+    "message": "Remove exact duplicates"
+  },
   "sortBy": {
     "message": "Sorting:"
   },
