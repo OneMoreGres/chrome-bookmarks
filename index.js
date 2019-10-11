@@ -241,7 +241,10 @@ function getSearch() {
     if (word.length < minWordLength)
       return {};
 
-    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escaped = word
+      .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+      .replace(/[*]/g, '[^' + word[0] + ']*')
+      .replace(/[?]/g, '.');
 
     if (escaped[0] == '#') {
       let pattern = escaped;
