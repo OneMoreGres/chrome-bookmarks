@@ -704,12 +704,20 @@ function setMode(mode) {
   document.querySelector("#tags").style.visibility = showingTags ? "visible" : "hidden";
 
   const canSort = currentMode != modeDuplicates;
-  document.querySelector("#sortByName").classList.toggle("disabled",
-    !(canSort));
-  document.querySelector("#sortByDate").classList.toggle("disabled",
-    !(canSort && currentMode == modeBookmark));
-  document.querySelector("#sortByCount").classList.toggle("disabled",
-    !(canSort && showingTags));
+  const canSortByName = canSort;
+  let byName = document.querySelector("#sortByName");
+  byName.classList.toggle("disabled", !canSortByName);
+  byName.onclick = canSortByName ? setTitleComparer : null;
+
+  const canSortByDate = canSort && currentMode == modeBookmark;
+  let byDate = document.querySelector("#sortByDate");
+  byDate.classList.toggle("disabled", !canSortByDate);
+  byDate.onclick = canSortByDate ? setDateComparer : null;
+
+  const canSortByCount = canSort && showingTags;
+  let byCount = document.querySelector("#sortByCount");
+  byCount.classList.toggle("disabled", !canSortByCount);
+  byCount.onclick = canSortByCount ? setCountComparer : null;
 
   currentComparer = comparerForMode[currentMode];
   if (currentComparer == null) currentComparer = titleComparerInv;
@@ -740,9 +748,6 @@ function init() {
   document.querySelector('#show-search-tags').onclick = showSearchTags;
   document.querySelector('#show-duplicates').onclick = showDuplicates;
   document.querySelector('#remove-duplicates').onclick = removeDuplicates;
-  document.querySelector('#sortByName').onclick = setTitleComparer;
-  document.querySelector('#sortByDate').onclick = setDateComparer;
-  document.querySelector('#sortByCount').onclick = setCountComparer;
 
   window.onscroll = updateBookmarkVisibility;
 
