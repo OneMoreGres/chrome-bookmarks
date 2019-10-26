@@ -80,5 +80,8 @@
   },
   "sortByCount": {
     "message": "Sort by bookmark count"
+  },
+  "dateAdded": {
+    "message": "date added"
   }
 }

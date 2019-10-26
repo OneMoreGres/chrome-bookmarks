@@ -188,6 +188,13 @@ function showBookmark(node, pathString, index, fullUrl = false) {
     tags += `<span class="tag">${text}</span>`;
   });
 
+  var dateDiv = "";
+  if (node.dateAdded) {
+    const date = new Date(node.dateAdded);
+    dateDiv = `<span class="dateAdded" title="${chrome.i18n.getMessage("dateAdded")}">\
+    ${date.toLocaleDateString()}</span>`;
+  }
+
   urlParser.href = node.url;
 
   const row1 = `<div>
@@ -195,6 +202,7 @@ function showBookmark(node, pathString, index, fullUrl = false) {
   <a href=${node.url} class="title">${title}</a>
   <span class="paths">${folders}</span>
   <span class="tags">${tags}</span>
+  ${dateDiv}
   <span class="controls">
    <span class="edit">${chrome.i18n.getMessage("editButton")}</span>
    <span class="remove">${chrome.i18n.getMessage("removeButton")}</span>
@@ -332,7 +340,7 @@ function doSearch() {
 
   chrome.bookmarks.getTree(function (tree) {
     setMode(modeBookmark);
-    let state = {'items': [], 'total': 0};
+    let state = { 'items': [], 'total': 0 };
     tree.forEach(node => filterBookmarks(node, "", search, state));
     const text = state.items.reduce((sum, node, index) =>
       sum + showBookmark(node.node, node.path, index), "");
@@ -577,7 +585,7 @@ function parseTags(node, tags) {
 function visualizeTags(tags) {
   let ordered = [];
   for (name in tags) {
-    const item = {'title' : name, 'count': tags[name]};
+    const item = { 'title': name, 'count': tags[name] };
     insertSorted(ordered, item);
   }
   const tagsHtml = ordered.reduce((sum, tag) =>
@@ -608,7 +616,7 @@ function showSearchTags() {
 
   chrome.bookmarks.getTree(function (tree) {
     setMode(modeSearchTags);
-    let state = {'items': [], 'total': 0};
+    let state = { 'items': [], 'total': 0 };
     tree.forEach(node => filterBookmarks(node, "", search, state));
     let tags = {};
     state.items.forEach(item => parseTags(item.node, tags));

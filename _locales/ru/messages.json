@@ -80,5 +80,8 @@
   },
   "sortByCount": {
     "message": "по количеству закладок"
+  },
+  "dateAdded": {
+    "message": "дата добавления"
   }
 }

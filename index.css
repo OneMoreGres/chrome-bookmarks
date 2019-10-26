@@ -136,6 +136,7 @@
 
 .bookmark .path,
 .bookmark .tag,
+.bookmark .dateAdded,
 .controls .edit,
 .controls .remove {
   padding: 2px;
@@ -154,6 +155,10 @@
 .bookmark .tag {
   background: #4185fa;
   cursor: copy;
+}
+
+.bookmark .dateAdded {
+  background: #c07606;
 }
 
 .controls .edit {
