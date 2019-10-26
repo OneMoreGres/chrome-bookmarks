@@ -68,7 +68,7 @@ function insertSorted(items, item) {
 
   while (left < right) {
     const mid = (left + right) >>> 1;
-    if (currentComparer(item, items[mid]))
+    if (!currentComparer(item, items[mid]))
       left = mid + 1;
     else
       right = mid;
@@ -78,7 +78,7 @@ function insertSorted(items, item) {
 }
 
 function refreshSorting() {
-  const updateTitle = function (selector, text, up, down) {
+  const updateTitle = function (selector, text, down, up) {
     let div = document.querySelector(selector);
     div.text = chrome.i18n.getMessage(text);
     if (!(currentComparer == up || currentComparer == down)) {
