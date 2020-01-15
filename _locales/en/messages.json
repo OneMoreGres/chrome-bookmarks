@@ -40,7 +40,7 @@
     "message": "Bookmark title with tags"
   },
   "targetFolderPrompt": {
-    "message": "Target folder"
+    "message": "Target folder. Path from 'Other bookmarks'. Folder must exist."
   },
   "editButton": {
     "message": "edit..."
@@ -55,7 +55,7 @@
     "message": "Remove bookmark $1?"
   },
   "inputHint": {
-    "message": "Search in title and url. Search rules:\n/<text> - bookmark is in folder which name starts with <text>,\n/<text>/ - bookmark is in folder with name <text>\n#<text> - bookmark contains tag that starts with <text>\n#<text># - bookmark contains tag <text>\n!<filter> - bookmark does not match filter <filter> (!#abc# - without tag 'abc')\n* - all bookmarks.\nInside filter following wildcards can be used:\n* - any amount of any characters (t*t matches tt, test, t1t, tqwertyt, ...)\n? - any single character (t?t matches t1t, tqt, t2t, ...)"
+    "message": "Search in title and url. Search rules:\n/<text> - bookmark is in folder which name starts with <text>,\n/<text>/ - bookmark is in folder with name <text>\n#<text> - bookmark contains tag that starts with <text>\n#<text># - bookmark contains tag <text>\n!<filter> - bookmark does not match filter <filter> (!#abc# - without tag 'abc')\n* - all bookmarks.\nInside filter following wildcards can be used:\n* - any amount of any characters (t*t matches tt, test, t1t, tqwertyt, ...)\n? - any single character (t?t matches t1t, tqt, t2t, ...)\nWARNING! Spaces in tags and folders are not supported"
   },
   "showAllTags": {
     "message": "Show all tags"
