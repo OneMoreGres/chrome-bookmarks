@@ -16,6 +16,7 @@ const modeDuplicates = 4;
 var currentComparer = null;
 var comparerForMode = {};
 var currentMode = modeBookmark;
+const lastComparerKey = 'comparers'
 
 
 function titleComparer(left, right) {
@@ -42,6 +43,40 @@ function countComparer(left, right) {
 
 function countComparerInv(left, right) {
   return countComparer(right, left);
+}
+
+const availableComparers = {
+  't': titleComparer, 'ti': titleComparerInv,
+  'd': dateAddedComparer, 'di': dateAddedComparerInv,
+  'c': countComparer, 'ci': countComparerInv
+};
+
+function saveComparers() {
+  let getName = function (comparer) {
+    for (let name in availableComparers) {
+      if (availableComparers[name] === comparer) return name;
+    }
+    return null;
+  }
+
+  let toSave = {}
+  for (let mode in comparerForMode) {
+    toSave[mode] = getName(comparerForMode[mode]);
+  }
+  chrome.storage.local.set({ [lastComparerKey]: toSave });
+}
+
+function loadComparers() {
+  chrome.storage.local.get(lastComparerKey, function (loaded) {
+    let comparers = loaded[lastComparerKey]
+    for (let mode in comparers) {
+      let name = comparers[mode]
+      comparerForMode[mode] = availableComparers[name];
+    }
+    currentComparer = comparerForMode[currentMode]
+    if (currentComparer == null) currentComparer = titleComparerInv;
+    refreshSorting()
+  });
 }
 
 function setTitleComparer() {
@@ -734,6 +769,7 @@ function setMode(mode) {
 
 function init() {
   localizeHtmlPage();
+  loadComparers();
 
   var currentId = null;
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
@@ -758,6 +794,8 @@ function init() {
   document.querySelector('#remove-duplicates').onclick = removeDuplicates;
 
   window.onscroll = updateBookmarkVisibility;
+
+  window.onunload = saveComparers;
 
   setMode(modeBookmark);
 
