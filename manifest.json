@@ -16,6 +16,12 @@
       "suggested_key": {
         "default": "Ctrl+Shift+S"
       }
+    },
+    "suggest_tags": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E"
+      },
+      "description" : "Suggest tags"
     }
   },
   "background": {
@@ -27,6 +33,7 @@
   "permissions": [
     "bookmarks",
     "storage",
+    "activeTab",
     "chrome://favicon/"
   ],
   "version": "0.7.1"
