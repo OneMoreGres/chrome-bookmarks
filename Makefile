@@ -10,11 +10,11 @@ dist:
 	cp -rt $(dir) $(filter-out $(min),$(files))
 	$(foreach i,$(min),minify $(i) > $(dir)/$(i);)
 	rm -f $(out_chrome)
-	zip -r $(out_chrome) $(dir)
+	7z a $(out_chrome) $(dir)
 	@echo Firefox
 	rm -rf $(dir)
 	mkdir -p $(dir)
 	rm -f $(out_firefox)
 	cp -rt $(dir) $(files)
-	cd $(dir) && zip -r -FS $(out_firefox) *
+	cd $(dir) && 7z a $(out_firefox) *
 	rm -rf $(dir)

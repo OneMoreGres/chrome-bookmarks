@@ -529,9 +529,9 @@ function addFolderTags() {
 
     var changed = false;
     const paths = item.querySelectorAll('.path');
-    for (var ii = 0; ii < paths.length; ++ii) {
-      const path = paths[ii].innerHTML;
-      if (path.indexOf(' ') != -1) continue; // spaces are forbidden
+    for (var ii = 1; ii < paths.length; ++ii) { // assume 1st in path is system folder
+      let path = paths[ii].innerHTML;
+      if (path.indexOf(' ') != -1) path = path.split(' ').join('_');
       const re = tagRegExp(path);
       const index = title.search(re);
       if (index != -1) continue;
