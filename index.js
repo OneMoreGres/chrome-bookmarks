@@ -309,7 +309,8 @@ function getSearch() {
       return;
     }
 
-    search.words.push({ "re": new RegExp(escaped, 'i'), "shouldMatch": shouldMatch });
+    let dateLike = /[0-9\-]+/.test(word) && word.indexOf('-') != -1;
+    search.words.push({ "re": new RegExp(escaped, 'i'), "shouldMatch": shouldMatch, "dateLike" : dateLike });
   });
 
   return search;
@@ -329,7 +330,9 @@ function filterBookmarks(node, path, search, state) {
   if (search.words.length > 0) {
     const ok = search.words.reduce(function (prev, word) {
       return prev && (word.shouldMatch == (node.title.search(word.re) != -1
-        || node.url.search(word.re) != -1));
+        || node.url.search(word.re) != -1
+        || (word.dateLike 
+          && new Date(node.dateAdded).toISOString().substr(0, 10).search(word.re) != -1)));
     }, true);
     if (!ok) return;
   }
