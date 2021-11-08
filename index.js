@@ -770,6 +770,11 @@ function setMode(mode) {
   refreshSorting();
 }
 
+function showHelp() {
+  let url = chrome.extension.getURL('_locales/' + chrome.i18n.getMessage('@@ui_locale') + '/help.html');
+  chrome.tabs.create({ 'url': url }, null);
+}
+
 function init() {
   localizeHtmlPage();
   loadComparers();
@@ -795,6 +800,7 @@ function init() {
   document.querySelector('#show-search-tags').onclick = showSearchTags;
   document.querySelector('#show-duplicates').onclick = showDuplicates;
   document.querySelector('#remove-duplicates').onclick = removeDuplicates;
+  document.querySelector('#show-help').onclick = showHelp;
 
   window.onscroll = updateBookmarkVisibility;
 

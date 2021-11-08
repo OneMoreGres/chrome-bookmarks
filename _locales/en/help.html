@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Справка</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+
+  <h1>Help</h1>
+  <h2>Search</h2>
+  <p>Search in title, url and add date. Search rules:</p>
+  <ul>
+    <li>/&lt;text&gt; - bookmark is in folder which name starts with &lt;text&gt;</li>
+    <li>/&lt;text&gt;/ - bookmark is in folder &lt;text&gt;</li>
+    <li>#&lt;text&gt; - bookmark contains tag that starts with &lt;text&gt;</li>
+    <li>#&lt;text&gt;# - bookmark contains tag &lt;text&gt;</li>
+    <li>YYYY-MM-DD - bookmark is added in provided date. Partial date is supported, but must contain "-"</li>
+    <li>!&lt;filter&gt; - bookmark does not match filter &lt;filter&gt; (!#abc# - without tag 'abc')</li>
+    <li>* - all bookmarks</li>
+  </ul>
+  <p>Inside filter following wildcards can be used:</p>
+  <ul>
+    <li>* - any amount of any characters (t*t matches tt, test, t1t, tqwertyt, ...)</li>
+    <li>? - any single character (t?t matches t1t, tqt, t2t, ...)</li>
+  </ul>
+  <p>WARNING! Spaces in tags and folders are not supported</p>
+  <p>First 10 results can be opened with Ctrl+index hotkey</p>
+
+  <h2>Actions</h2>
+  <h3>Open all</h3>
+  <p>Open all bookmarks from search results</p>
+
+  <h3>Add tag to all</h3>
+  <p>Enter and add tag for all bookmarks from search results</p>
+  
+  <h3>Remove tag from all</h3>
+  <p>Enter and remove tag from all bookmarks from search results</p>
+  
+  <h3>Add folder tags</h3>
+  <p>Add tags for each folder name to all bookmarks from search results</p>
+  
+  <h3>Move to folder</h3>
+  <p>Move bookmarks from search results to provided path</p>
+  
+  <h3>Show all tags</h3>
+  <p>Show all tags used by bookmarks</p>
+  
+  <h3>Show tags in search</h3>
+  <p>Show tags used by bookmarks in search results</p>
+  
+  <h3>Show possible duplicates</h3>
+  <p>Show possible duplicates from all bookmarks</p>
+  
+  <h3>Remove exact duplicates</h3>
+  <p>Remove identical bookmarks</p>
+
+</body>
+
+</html>
