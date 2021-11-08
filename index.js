@@ -331,7 +331,7 @@ function filterBookmarks(node, path, search, state) {
     const ok = search.words.reduce(function (prev, word) {
       return prev && (word.shouldMatch == (node.title.search(word.re) != -1
         || node.url.search(word.re) != -1
-        || (word.dateLike 
+        || (word.dateLike && node.dateAdded
           && new Date(node.dateAdded).toISOString().substr(0, 10).search(word.re) != -1)));
     }, true);
     if (!ok) return;
