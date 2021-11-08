@@ -227,7 +227,7 @@ function showBookmark(node, pathString, index, fullUrl = false) {
   if (node.dateAdded) {
     const date = new Date(node.dateAdded);
     dateDiv = `<span class="dateAdded" title="${chrome.i18n.getMessage("dateAdded")}">\
-    ${date.toLocaleDateString()}</span>`;
+    ${date.toISOString().substr(0, 10)}</span>`;
   }
 
   urlParser.href = node.url;
